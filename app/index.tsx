@@ -4,7 +4,7 @@ import { Link } from 'expo-router'
 export default function HomeScreen() {
     return (
         <View>
-            <Link href={{ pathname: '/login' }}>
+            <Link href='/(auth)/login'>
                 <Text>Log in</Text>
             </Link>
         </View>
