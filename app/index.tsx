@@ -1,11 +1,12 @@
-import { View, Text, Button } from 'react-native'
+import { View, Text } from 'react-native'
+import { Link } from 'expo-router'
 
 export default function HomeScreen() {
     return (
         <View>
-            <Text>
-                Hello there!
-            </Text>
+            <Link href={{ pathname: '/login' }}>
+                <Text>Log in</Text>
+            </Link>
         </View>
     )
 }
