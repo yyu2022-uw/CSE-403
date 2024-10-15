@@ -12,7 +12,7 @@ export default function TabNavigator() {
             }}
         />
         <Tabs.Screen
-            name="chat"
+            name="index"
             options={{
                 title: 'Chat',
                 tabBarIcon: ({ size, color }) => <FontAwesome6 name="message" size={size} color={color} />
