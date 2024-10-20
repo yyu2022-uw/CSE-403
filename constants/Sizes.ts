@@ -9,12 +9,16 @@ export const sizes = StyleSheet.create({
         fontWeight: '600',
         fontSize: 24,
     },
+    mentorMenteeTitle: {
+        fontWeight: '700',
+        fontSize: 18,
+    },
     plainText: {
         fontWeight: '400',
         fontSize: 18,
     },
     pillText: {
-        fontWeight: '500',
-        fontSize: 18,
+        fontWeight: '400',
+        fontSize: 14,
     }
 })

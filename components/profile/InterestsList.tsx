@@ -8,28 +8,28 @@ import { sizes } from '@Sizes';
 const InterestsList = () => {
     return (
         <View style={styles.container}>
-            <FlatList
-                data={interests}
-                keyExtractor={(item: Interest) => item.id.toString()}
-                renderItem={({ item }: { item: Interest }) => (
-                    <View style={styles.item}>
+            {interests.map((item: Interest) => (
+                <View key={item.id} style={[styles.item, { backgroundColor: item.color }]}>
+                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                        <Text style={[sizes.pillText, { paddingRight: 6 }]}>{item.icon}</Text>
                         <Text style={sizes.pillText}>{item.name}</Text>
                     </View>
-                )}
-            />
+                </View>
+            ))}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        padding: 16,
+        width: 150,
     },
     item: {
-        padding: padding,
-        marginVertical: 8,
+        paddingLeft: 12,
+        padding: 10,
+        marginVertical: 4,
         backgroundColor: Colors.light.tint,
+        borderRadius: 50, // pill shape
     }
 });
 

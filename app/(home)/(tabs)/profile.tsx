@@ -6,6 +6,7 @@ import ProfileTag from '@/components/profile/ProfileTag';
 import { padding } from '@Spacing';
 import { sizes } from '@Sizes';
 import { ScrollView } from 'react-native-gesture-handler';
+import Divider from '@/components/Divider';
 
 export default function Profile() {
     return (
@@ -18,7 +19,21 @@ export default function Profile() {
                     Bio
                 </Text>
                 <Bio text={"Hi, nice to meet you!"} />
-                <InterestsList />
+                <Divider margin={padding} />
+                <View style={styles.interests}>
+                    <View>
+                        <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
+                            Mentoring
+                        </Text>
+                        <InterestsList />
+                    </View>
+                    <View>
+                        <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
+                            Menteeing
+                        </Text>
+                        <InterestsList />
+                    </View>
+                </View>
             </ScrollView>
         </SafeAreaView>
     );
@@ -26,9 +41,21 @@ export default function Profile() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        backgroundColor: 'white',
     },
     subtitle: {
         paddingLeft: padding
+    },
+    interests: {
+        width: 350,
+        paddingTop: padding / 2,
+        flex: 2,
+        margin: "auto",
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
+    mentorMentee: {
+        paddingBottom: 8
     }
 })
