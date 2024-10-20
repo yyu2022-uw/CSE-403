@@ -1,11 +1,16 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
     "strict": true,
+    "baseUrl": "./",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["src/*"],
+      "@/data/*": ["assets/data/*"],
+      "@/components/*": ["components/*"],
+      "@Colors": ["constants/Colors.ts"],
+      "@Spacing": ["constants/Spacing.ts"],
+      "@Sizes": ["constants/Sizes.ts"]
     }
   },
   "include": [
