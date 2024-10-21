@@ -8,17 +8,22 @@ import { sizes } from '@Sizes';
 import { ScrollView } from 'react-native-gesture-handler';
 import Divider from '@/components/Divider';
 
+let editing: boolean = false;
+
 export default function Profile() {
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
                 <ProfileTag
+                    editing={editing}
                     pictureUrl='https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG-Download-Image.png'
                     name='Bob' />
                 <Text style={[sizes.subtitle, styles.subtitle]}>
                     Bio
                 </Text>
-                <Bio text={"Hi, nice to meet you!"} />
+                <Bio
+                    editing={editing}
+                    text={"Hi, nice to meet you!"} />
                 <Divider margin={spacing} />
                 <View style={styles.interests}>
                     <View>
@@ -37,6 +42,7 @@ export default function Profile() {
             </ScrollView>
         </SafeAreaView>
     );
+
 }
 
 const styles = StyleSheet.create({

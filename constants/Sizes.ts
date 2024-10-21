@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native"
 export const sizes = StyleSheet.create({
     title: {
         fontWeight: '700',
-        fontSize: 32,
+        fontSize: 28,
     },
     subtitle: {
         fontWeight: '600',
