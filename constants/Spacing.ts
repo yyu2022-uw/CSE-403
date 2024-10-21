@@ -1,1 +1,1 @@
-export const padding = 20
+export const spacing = 20

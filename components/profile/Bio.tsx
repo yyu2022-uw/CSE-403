@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
-import { padding } from '@Spacing'
+import { spacing } from '@Spacing'
 import { sizes } from '@Sizes'
 
 interface BioProps {
@@ -19,6 +19,6 @@ const styles = StyleSheet.create({
     container: {
         width: "100%",
         // height: 100,
-        paddingLeft: padding
+        paddingLeft: spacing
     }
 })

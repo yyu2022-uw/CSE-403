@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Image } from 'react-native';
-import { padding } from '@Spacing'
+import { spacing } from '@Spacing'
 import React from 'react';
 import { sizes } from '@Sizes';
 
@@ -23,12 +23,12 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: padding
+        padding: spacing
     },
     profilePicture: {
         width: 100,
         height: 100,
         borderRadius: 25, // circle
-        marginRight: padding
+        marginRight: spacing
     },
 });

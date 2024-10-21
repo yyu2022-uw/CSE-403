@@ -1,5 +1,4 @@
 import React from 'react';
-import { padding } from '@Spacing'
 import { FlatList, Text, View, StyleSheet } from 'react-native';
 import { interests, Interest } from '@/data/interests';
 import { Colors } from '@Colors';

@@ -3,7 +3,7 @@ import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
 import InterestsList from '@/components/profile/InterestsList';
 import Bio from '@/components/profile/Bio';
 import ProfileTag from '@/components/profile/ProfileTag';
-import { padding } from '@Spacing';
+import { spacing } from '@Spacing';
 import { sizes } from '@Sizes';
 import { ScrollView } from 'react-native-gesture-handler';
 import Divider from '@/components/Divider';
@@ -19,7 +19,7 @@ export default function Profile() {
                     Bio
                 </Text>
                 <Bio text={"Hi, nice to meet you!"} />
-                <Divider margin={padding} />
+                <Divider margin={spacing} />
                 <View style={styles.interests}>
                     <View>
                         <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
@@ -45,11 +45,11 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     subtitle: {
-        paddingLeft: padding
+        paddingLeft: spacing
     },
     interests: {
         width: 350,
-        paddingTop: padding / 2,
+        paddingTop: spacing / 2,
         flex: 2,
         margin: "auto",
         flexDirection: "row",
