@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
 import InterestsList from '@/components/profile/InterestsList';
 import Bio from '@/components/profile/Bio';
@@ -7,13 +7,10 @@ import { spacing } from '@Spacing';
 import { sizes } from '@Sizes';
 import { ScrollView } from 'react-native-gesture-handler';
 import Divider from '@/components/Divider';
-import createContext from 'react'
-import { UserContext } from '../../../context/UserContext';
 
 let editing: boolean = false;
 
 export default function Profile() {
-    const user = useContext(UserContext);
 
     return (
         <SafeAreaView style={styles.container}>

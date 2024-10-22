@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View, Image, Pressable, Alert } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';  // Import the image picker
 import { spacing } from '@Spacing'
 import React, { useState } from 'react';
 import { sizes } from '@Sizes';
@@ -12,9 +13,34 @@ interface ProfileTagProps {
 const ProfileTag: React.FC<ProfileTagProps> = ({ editing }) => {
     const { user, setUser } = useUser();
     const [editableName, setEditableName] = useState(user.name);
+    const [selectedImage, setSelectedImage] = useState(user.pictureUrl);
 
     const saveName = () => {
         setUser({ ...user, name: editableName });
+    };
+
+    // Function to pick an image from the gallery
+    const saveImage = async () => {
+        // Ask for permissions
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('Permission Denied', 'Sorry, we need camera roll permissions to make this work!');
+            return;
+        }
+
+        // Open image picker
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            // Update the selected image
+            setSelectedImage(result.assets[0].uri);
+            setUser({ ...user, pictureUrl: result.assets[0].uri });  // Save to context
+        }
     };
 
     if (!editing) {
@@ -27,8 +53,8 @@ const ProfileTag: React.FC<ProfileTagProps> = ({ editing }) => {
     } else {
         return (
             <View style={styles.container}>
-                <Pressable onPress={() => Alert.alert('Image Button Pressed')}>
-                    <Image source={{ uri: user.pictureUrl }} style={styles.profilePicture} />
+                <Pressable onPress={editing ? saveImage : undefined}>
+                    <Image source={{ uri: selectedImage }} style={styles.profilePicture} />
                 </Pressable>
                 <TextInput
                     style={[sizes.title, styles.input]}
@@ -53,7 +79,7 @@ const styles = StyleSheet.create({
     profilePicture: {
         width: 100,
         height: 100,
-        borderRadius: 25, // circle
+        borderRadius: 50, // circle
         marginRight: spacing
     },
     input: {
