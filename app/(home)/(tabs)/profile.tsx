@@ -7,6 +7,7 @@ import { spacing } from '@Spacing';
 import { sizes } from '@Sizes';
 import { ScrollView } from 'react-native-gesture-handler';
 import Divider from '@/components/Divider';
+import EditProfileButton from '@/components/profile/EditProfileButton';
 
 let editing: boolean = false;
 
@@ -36,6 +37,7 @@ export default function Profile() {
                     </View>
                 </View>
             </ScrollView>
+            <EditProfileButton></EditProfileButton>
         </SafeAreaView>
     );
 

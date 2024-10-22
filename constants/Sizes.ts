@@ -17,8 +17,12 @@ export const sizes = StyleSheet.create({
         fontWeight: '400',
         fontSize: 18,
     },
-    pillText: {
+    smallPillText: {
         fontWeight: '400',
         fontSize: 14,
+    },
+    largePillText: {
+        fontWeight: '600',
+        fontSize: 18,
     }
 })
