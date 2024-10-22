@@ -8,8 +8,7 @@ import { sizes } from '@Sizes';
 import { ScrollView } from 'react-native-gesture-handler';
 import Divider from '@/components/Divider';
 import EditProfileButton from '@/components/profile/EditProfileButton';
-
-let editing: boolean = false;
+import FindNewInterestMessage from '@/components/profile/FindNewInterestMessage';
 
 export default function Profile() {
     const [editing, setEditing] = useState(false);
@@ -24,25 +23,32 @@ export default function Profile() {
                 <Bio editing={editing} />
                 <Divider margin={spacing} />
                 <View style={styles.interests}>
-                    <View>
-                        <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
-                            Mentoring
-                        </Text>
-                        <InterestsList />
+                    <View style={styles.interestsLists}>
+                        <View>
+                            <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
+                                Mentoring
+                            </Text>
+                            <InterestsList />
+                        </View>
+                        <View>
+                            <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
+                                Menteeing
+                            </Text>
+                            <InterestsList />
+                        </View>
                     </View>
-                    <View>
-                        <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
-                            Menteeing
-                        </Text>
-                        <InterestsList />
-                    </View>
+                    {editing ? (
+                        <View style={styles.newInterestMessage}>
+                            <FindNewInterestMessage />
+                        </View>
+                    ) : null}
                 </View>
             </ScrollView>
             <EditProfileButton
                 editing={editing}
                 setEditing={setEditing}
             />
-        </SafeAreaView>
+        </SafeAreaView >
     );
 
 }
@@ -56,14 +62,21 @@ const styles = StyleSheet.create({
         paddingLeft: spacing
     },
     interests: {
+        margin: 'auto',
+        alignItems: 'center',
+    },
+    interestsLists: {
         width: 350,
         paddingTop: spacing / 2,
         flex: 2,
-        margin: "auto",
-        flexDirection: "row",
-        justifyContent: "space-between",
+        margin: 'auto',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
     },
     mentorMentee: {
         paddingBottom: 8
+    },
+    newInterestMessage: {
+        paddingTop: 8
     }
 })
