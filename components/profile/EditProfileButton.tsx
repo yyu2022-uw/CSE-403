@@ -5,16 +5,28 @@ import { spacing } from '@Spacing';
 import { sizes } from '@Sizes';
 import { Ionicons } from '@expo/vector-icons'; // Import the Ionicons
 
-const EditProfileButton = () => {
+let buttonColor = Colors.light.button;
+let buttonTextColor = Colors.light.buttonText;
+
+type EditProfileButtonProps = {
+    editing: boolean;
+    setEditing: (editing: boolean) => void;
+};
+
+const EditProfileButton: React.FC<EditProfileButtonProps> = ({ editing, setEditing }) => {
+
+    const buttonColor = !editing ? Colors.light.button : Colors.light.buttonSave;
+    const buttonTextColor = !editing ? Colors.light.buttonText : Colors.light.buttonSaveText;
+    const buttonText = !editing ? 'Edit Profile' : 'Save Edits';
+    const buttonIcon = !editing ? 'pencil' : 'save';
+
     return (
-        <View style={styles.container}>
-            <Pressable>
-                <View style={styles.textContainer}>
-                    <Ionicons name="pencil" size={24} color={Colors.light.buttonText} style={styles.icon} />
-                    <Text style={[sizes.largePillText, { color: Colors.light.buttonText }]}>Edit Profile</Text>
-                </View>
-            </Pressable>
-        </View>
+        <Pressable onPress={() => setEditing(!editing)} style={[styles.container, { backgroundColor: buttonColor }]}>
+            <View style={styles.textContainer}>
+                <Ionicons name={buttonIcon} size={24} color={buttonTextColor} style={styles.icon} />
+                <Text style={[sizes.largePillText, { color: buttonTextColor }]}>{buttonText}</Text>
+            </View>
+        </Pressable>
     );
 };
 
@@ -25,7 +37,6 @@ const styles = StyleSheet.create({
         width: "90%",
         height: 48,
         borderRadius: 50,
-        backgroundColor: Colors.light.button,
         marginBottom: spacing,
         margin: "auto",
         justifyContent: 'center',

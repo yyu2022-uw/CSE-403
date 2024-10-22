@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { sizes } from '@Sizes';
 import { TextInput } from 'react-native-gesture-handler';
 import { useUser } from '@useUser';
+import { Colors } from '@Colors';
 
 interface ProfileTagProps {
     editing: boolean;
@@ -43,29 +44,27 @@ const ProfileTag: React.FC<ProfileTagProps> = ({ editing }) => {
         }
     };
 
-    if (!editing) {
-        return (
-            <View style={styles.container}>
-                <Image source={{ uri: user.pictureUrl }} style={styles.profilePicture} />
-                <Text style={sizes.title}>{user.name}</Text>
-            </View>
-        );
-    } else {
-        return (
-            <View style={styles.container}>
-                <Pressable onPress={editing ? saveImage : undefined}>
-                    <Image source={{ uri: selectedImage }} style={styles.profilePicture} />
-                </Pressable>
+    return (
+        <View style={styles.container}>
+            <Pressable onPress={editing ? saveImage : undefined}>
+                <Image source={{ uri: selectedImage }} style={styles.profilePicture} />
+            </Pressable>
+            {editing ? (
                 <TextInput
                     style={[sizes.title, styles.input]}
                     value={editableName}
                     onChangeText={setEditableName}
                     onBlur={saveName}  // Save name when input loses focus
                     placeholder="Edit Name"
+                    placeholderTextColor={Colors.light.placeholderText}
                 />
-            </View>
-        );
-    };
+            ) : (
+                <Text style={[sizes.title, styles.input]}>
+                    {editableName || "Your Name"}
+                </Text>
+            )}
+        </View>
+    );
 };
 
 export default ProfileTag;

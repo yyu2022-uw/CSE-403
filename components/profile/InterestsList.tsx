@@ -10,8 +10,8 @@ const InterestsList = () => {
             {interests.map((item: Interest) => (
                 <View key={item.id} style={[styles.item, { backgroundColor: item.color }]}>
                     <View style={{ flex: 1, flexDirection: 'row' }}>
-                        <Text style={[sizes.pillText, { paddingRight: 6 }]}>{item.icon}</Text>
-                        <Text style={sizes.pillText}>{item.name}</Text>
+                        <Text style={[sizes.smallPillText, { paddingRight: 6 }]}>{item.icon}</Text>
+                        <Text style={sizes.smallPillText}>{item.name}</Text>
                     </View>
                 </View>
             ))}

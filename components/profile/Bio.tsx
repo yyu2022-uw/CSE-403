@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { spacing } from '@Spacing'
 import { sizes } from '@Sizes'
 import { useUser } from '@useUser';
+import { Colors } from '@Colors';
 
 interface BioProps {
     editing: boolean;
@@ -30,7 +31,8 @@ export default function Bio({ editing }: BioProps) {
                     value={editableBioText}
                     onChangeText={setEditableBioText}
                     onBlur={saveBio}
-                    placeholder="Edit Name"
+                    placeholder="Write your biography..."
+                    placeholderTextColor={Colors.light.placeholderText}
                 />
             </View>
         );

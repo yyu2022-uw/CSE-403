@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
 import InterestsList from '@/components/profile/InterestsList';
 import Bio from '@/components/profile/Bio';
@@ -12,6 +12,7 @@ import EditProfileButton from '@/components/profile/EditProfileButton';
 let editing: boolean = false;
 
 export default function Profile() {
+    const [editing, setEditing] = useState(false);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -37,7 +38,10 @@ export default function Profile() {
                     </View>
                 </View>
             </ScrollView>
-            <EditProfileButton></EditProfileButton>
+            <EditProfileButton
+                editing={editing}
+                setEditing={setEditing}
+            />
         </SafeAreaView>
     );
 

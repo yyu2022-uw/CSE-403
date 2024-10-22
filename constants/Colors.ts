@@ -12,10 +12,13 @@ export const Colors = {
     background: '#fff',
     tint: tintColorLight,
     icon: '#687076',
+    placeholderText: 'gray',
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
     button: '#caf0fc',
     buttonText: '#0d8cb5',
+    buttonSave: '#687076',
+    buttonSaveText: '#ffffff',
   },
   dark: {
     text: '#ECEDEE',
