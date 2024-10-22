@@ -2,19 +2,24 @@ import { View, Text, StyleSheet, TextInput } from 'react-native'
 import React, { useState } from 'react'
 import { spacing } from '@Spacing'
 import { sizes } from '@Sizes'
+import { useUser } from '@useUser';
 
 interface BioProps {
     editing: boolean;
-    text: string;
 }
 
-export default function Bio({ editing, text }: BioProps) {
-    const [editableText, setEditableText] = useState(text);
+export default function Bio({ editing }: BioProps) {
+    const { user, setUser } = useUser();
+    const [editableBioText, setEditableBioText] = useState(user.bio);
+
+    const saveBio = () => {
+        setUser({ ...user, bio: editableBioText });
+    };
 
     if (!editing) {
         return (
             <View style={styles.container}>
-                <Text style={sizes.plainText}>{text}</Text>
+                <Text style={sizes.plainText}>{user.bio}</Text>
             </View>
         );
     } else {
@@ -22,8 +27,9 @@ export default function Bio({ editing, text }: BioProps) {
             <View style={styles.container}>
                 <TextInput
                     style={[sizes.plainText, styles.input]}
-                    value={editableText}
-                    onChangeText={setEditableText}
+                    value={editableBioText}
+                    onChangeText={setEditableBioText}
+                    onBlur={saveBio}
                     placeholder="Edit Name"
                 />
             </View>

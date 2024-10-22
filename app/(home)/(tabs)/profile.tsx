@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
 import InterestsList from '@/components/profile/InterestsList';
 import Bio from '@/components/profile/Bio';
@@ -7,23 +7,22 @@ import { spacing } from '@Spacing';
 import { sizes } from '@Sizes';
 import { ScrollView } from 'react-native-gesture-handler';
 import Divider from '@/components/Divider';
+import createContext from 'react'
+import { UserContext } from '../../../context/UserContext';
 
 let editing: boolean = false;
 
 export default function Profile() {
+    const user = useContext(UserContext);
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
-                <ProfileTag
-                    editing={editing}
-                    pictureUrl='https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG-Download-Image.png'
-                    name='Bob' />
+                <ProfileTag editing={editing} />
                 <Text style={[sizes.subtitle, styles.subtitle]}>
                     Bio
                 </Text>
-                <Bio
-                    editing={editing}
-                    text={"Hi, nice to meet you!"} />
+                <Bio editing={editing} />
                 <Divider margin={spacing} />
                 <View style={styles.interests}>
                     <View>

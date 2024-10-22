@@ -10,7 +10,8 @@
       "@/components/*": ["components/*"],
       "@Colors": ["constants/Colors.ts"],
       "@Spacing": ["constants/Spacing.ts"],
-      "@Sizes": ["constants/Sizes.ts"]
+      "@Sizes": ["constants/Sizes.ts"],
+      "@useUser": ["hooks/useUser.tsx"]
     }
   },
   "include": [
