@@ -44,7 +44,8 @@
     "react-native-screens": "3.31.1",
     "react-native-svg": "15.2.0",
     "react-native-web": "~0.19.10",
-    "stream-chat-expo": "^5.39.2"
+    "stream-chat-expo": "^5.39.2",
+    "supabase": "^1.207.9"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
