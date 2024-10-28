@@ -4,8 +4,8 @@ import { StreamChat } from 'stream-chat';
 import { Chat, OverlayProvider } from 'stream-chat-expo';
 
 // This constant needs to be replaced with the environment variable, but for some reason I'm having issues here.
-const client = StreamChat.getInstance('kcg53pa793bv');
-//const client = StreamChat.getInstance(process.env.EXPO_PUBLIC_STREAM_KEY);
+//const client = StreamChat.getInstance('kcg53pa793bv');
+const client = StreamChat.getInstance(process.env.EXPO_PUBLIC_STREAM_API_KEY!);
 
 
 export default function ChatProvider ({children}: PropsWithChildren) {
