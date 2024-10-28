@@ -14,6 +14,14 @@ export default function TabNavigator() {
                 }}
             />
             <Tabs.Screen
+                name="matching"
+                options={{
+                    title: 'Matching',
+                    headerShown: false,
+                    tabBarIcon: ({ size, color }) => <FontAwesome5 name="user-friends" size={size} color={color} />
+                }}
+            />
+            <Tabs.Screen
                 name="index"
                 options={{
                     title: 'Chat',
@@ -24,7 +32,7 @@ export default function TabNavigator() {
                 name="profile"
                 options={{
                     title: 'Profile',
-                    tabBarIcon: ({ size, color }) => <FontAwesome5 name="user-alt" size={size} color={color} />
+                    tabBarIcon: ({ size, color }) => <FontAwesome6 name="circle-user" size={size} color={color}/>
                 }}
             />
         </Tabs>
