@@ -4,12 +4,12 @@ import { createContext, PropsWithChildren, useContext, useEffect, useState } fro
 
 type AuthContext = {
     session: Session | null;
-    user: User | undefined;
-    profile: any | undefined;
+    user: User | null;
+    profile: any | null;
 }
 
 const AuthContext = createContext<AuthContext>({
-    session: null, user: undefined, profile: undefined
+    session: null, user: null, profile: null
 });
 
 export default function AuthProvider ({children}: PropsWithChildren) {
@@ -44,7 +44,7 @@ export default function AuthProvider ({children}: PropsWithChildren) {
   }, [session?.user])
 
   return(
-      <AuthContext.Provider value={{session, user: session?.user, profile}}>
+      <AuthContext.Provider value={{session, user: session?.user!, profile}}>
           {children};
       </AuthContext.Provider>
   )
