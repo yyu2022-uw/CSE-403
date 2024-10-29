@@ -20,6 +20,7 @@ export default function Auth() {
     const [loading, setLoading] = useState(false)
 
     async function signInWithEmail() {
+        console.log("inside signInWithEmail");
         setLoading(true)
         const { error } = await supabase.auth.signInWithPassword({
             email: email,
@@ -31,6 +32,7 @@ export default function Auth() {
     }
 
     async function signUpWithEmail() {
+        console.log("inside signUpWithEmail");
         setLoading(true)
         const {
             data: { session },

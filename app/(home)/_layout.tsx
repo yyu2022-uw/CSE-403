@@ -6,6 +6,8 @@ export default function HomeLayout() {
 
     const {user} = useAuth();
 
+    console.log("From HomeLayout: " + user);
+
     if(!user) {
         return <Redirect href="/(auth)/login" />;
     }
