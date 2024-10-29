@@ -4,6 +4,10 @@ export interface Interest {
     color: string;
     icon: string;
 }
+export interface UserInterests {
+    id: number;
+    interestList: number[];
+}
 
 export const interests: Interest[] = [
     { id: 1, name: "Guitar", color: 'mistyrose', icon: '🎸' },
@@ -12,3 +16,15 @@ export const interests: Interest[] = [
     { id: 4, name: "Reading", color: 'oldlace', icon: '📚' },
     { id: 5, name: "Cooking", color: 'floralwhite', icon: '🥘' }
 ];
+
+export const userInterests: UserInterests[] = [
+    { id: 1, interestList: [1, 2, 3] },
+    { id: 2, interestList: [3, 4, 5] }
+]
+
+function listInterestsByUser(userId: number) {
+    let list = userInterests[userId - 1].interestList
+    return list.map((item: number) => (interests[item - 1]))
+}
+
+module.exports = { listInterestsByUser };
