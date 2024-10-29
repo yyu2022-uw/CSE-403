@@ -13,4 +13,15 @@ describe('interest tests', () => {
         );
     });
 
+    test('Get interests for user id = 2', () => {
+        userTwoInterestsList = listInterestsByUser(2)
+        expect(userTwoInterestsList).toEqual(
+            [
+                { id: 3, name: "Traveling", color: 'azure', icon: '✈️' },
+                { id: 4, name: "Reading", color: 'oldlace', icon: '📚' },
+                { id: 5, name: "Cooking", color: 'floralwhite', icon: '🥘' }
+            ]
+        );
+    });
+
 })
