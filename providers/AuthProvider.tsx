@@ -38,13 +38,15 @@ export default function AuthProvider ({children}: PropsWithChildren) {
         .select('*')
         .eq('id', session.user.id)
         .single();
+      
+        console.log('From fetchProfile: ' + data);
       setProfile(data);
     }
     fetchProfile();
   }, [session?.user])
 
   return(
-      <AuthContext.Provider value={{session, user: session?.user!, profile}}>
+      <AuthContext.Provider value={{session, user: session?.user ?? null, profile}}>
           {children};
       </AuthContext.Provider>
   )
