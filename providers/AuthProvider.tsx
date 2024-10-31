@@ -33,6 +33,7 @@ export default function AuthProvider ({children}: PropsWithChildren) {
     }
 
     const fetchProfile = async () => {
+      console.log('Starting fetchProfile');
       let {data, error} = await supabase
         .from('profiles')
         .select('*')
@@ -47,7 +48,7 @@ export default function AuthProvider ({children}: PropsWithChildren) {
 
   return(
       <AuthContext.Provider value={{session, user: session?.user ?? null, profile}}>
-          {children};
+          {children}
       </AuthContext.Provider>
   )
 }
