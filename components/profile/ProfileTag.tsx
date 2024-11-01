@@ -4,45 +4,47 @@ import { spacing } from '@Spacing'
 import React, { useState } from 'react';
 import { sizes } from '@Sizes';
 import { TextInput } from 'react-native-gesture-handler';
-import { useUser } from '@useUser';
+import { useAuth } from '@useAuth';
 import { Colors } from '@Colors';
+import { supabase } from 'lib/supabase';
 
 interface ProfileTagProps {
+    username: string;
+    avatarUrl: string;
     editing: boolean;
 }
 
-const ProfileTag: React.FC<ProfileTagProps> = ({ editing }) => {
-    const { user, setUser } = useUser();
-    const [editableName, setEditableName] = useState(user.name);
-    const [selectedImage, setSelectedImage] = useState(user.pictureUrl);
+const ProfileTag: React.FC<ProfileTagProps> = ({ username, avatarUrl, editing }) => {
+    const { session } = useAuth();
+    const [editableName, setEditableName] = useState(username);
+    const [selectedImage, setSelectedImage] = useState(avatarUrl);
 
-    const saveName = () => {
-        setUser({ ...user, name: editableName });
-    };
+    async function updateName({
+        username,
+    }: {
+        username: string
+    }) {
+        try {
+            if (!session?.user) throw new Error('No user on the session!')
 
-    // Function to pick an image from the gallery
-    const saveImage = async () => {
-        // Ask for permissions
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-            Alert.alert('Permission Denied', 'Sorry, we need camera roll permissions to make this work!');
-            return;
+            const updates = {
+                id: session?.user.id,
+                username,
+                updated_at: new Date(),
+            }
+
+            const { error } = await supabase.from('profiles').upsert(updates)
+
+            if (error) {
+                throw error
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                Alert.alert(error.message)
+            }
+        } finally {
         }
-
-        // Open image picker
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [1, 1],
-            quality: 1,
-        });
-
-        if (!result.canceled) {
-            // Update the selected image
-            setSelectedImage(result.assets[0].uri);
-            setUser({ ...user, pictureUrl: result.assets[0].uri });  // Save to context
-        }
-    };
+    }
 
     return (
         <View style={styles.container}>
@@ -54,7 +56,7 @@ const ProfileTag: React.FC<ProfileTagProps> = ({ editing }) => {
                     style={[sizes.title, styles.input]}
                     value={editableName}
                     onChangeText={setEditableName}
-                    onBlur={saveName}  // Save name when input loses focus
+                    // onBlur={saveName}  // Save name when input loses focus
                     placeholder="Edit Name"
                     placeholderTextColor={Colors.light.placeholderText}
                 />

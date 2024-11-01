@@ -53,49 +53,18 @@ export default function Profile() {
         }
     }
 
-    async function updateProfile({
-        username,
-        website,
-        avatar_url,
-    }: {
-        username: string
-        website: string
-        avatar_url: string
-    }) {
-        try {
-            setLoading(true)
-            if (!session?.user) throw new Error('No user on the session!')
-
-            const updates = {
-                id: session?.user.id,
-                username,
-                website,
-                avatar_url,
-                updated_at: new Date(),
-            }
-
-            const { error } = await supabase.from('profiles').upsert(updates)
-
-            if (error) {
-                throw error
-            }
-        } catch (error) {
-            if (error instanceof Error) {
-                Alert.alert(error.message)
-            }
-        } finally {
-            setLoading(false)
-        }
-    }
-
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
-                <ProfileTag editing={editing} />
+                <ProfileTag
+                    username={username}
+                    avatarUrl={avatarUrl}
+                    editing={editing}
+                />
                 <Text style={[sizes.subtitle, styles.subtitle]}>
                     Bio
                 </Text>
-                <Bio editing={editing} />
+                {/* <Bio editing={editing} /> */}
                 <Divider margin={spacing} />
                 <View style={styles.interests}>
                     <View style={styles.interestsLists}>
