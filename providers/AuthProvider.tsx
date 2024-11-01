@@ -1,56 +1,48 @@
-import { Session, User } from "@supabase/auth-js";
-import { supabase } from "lib/supabase";
-import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
+// providers/AuthProvider.tsx
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { supabase } from 'lib/supabase';
+import { Session } from '@supabase/supabase-js';
 
-type AuthContext = {
-    session: Session | null;
-    user: User | null;
-    profile: any | null;
+interface AuthContextType {
+  session: Session | null;
+  loading: boolean;
 }
 
-const AuthContext = createContext<AuthContext>({
-    session: null, user: null, profile: null
-});
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export default function AuthProvider ({children}: PropsWithChildren) {
-    const [session, setSession] = useState<Session | null>(null)
-    const [profile, setProfile] = useState<any | null>();
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-    })
+    const fetchSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session);
+      setLoading(false);
+    };
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-  }, [])
+    fetchSession();
 
-  useEffect(() => {
-    if(!session?.user) {
-      setProfile(null);
-      return;
-    }
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
 
-    const fetchProfile = async () => {
-      console.log('Starting fetchProfile');
-      let {data, error} = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session.user.id)
-        .single();
-      
-        console.log('From fetchProfile: ' + data);
-      setProfile(data);
-    }
-    fetchProfile();
-  }, [session?.user])
+    // return () => {
+    //   authListener?.unsubscribe();
+    // };
+  }, []);
 
-  return(
-      <AuthContext.Provider value={{session, user: session?.user ?? null, profile}}>
-          {children}
-      </AuthContext.Provider>
-  )
-}
+  return (
+    <AuthContext.Provider value={{ session, loading }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const user = useContext(AuthContext);
+  if (user === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return user;
+};

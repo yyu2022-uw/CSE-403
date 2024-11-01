@@ -14,7 +14,7 @@ import { supabase } from 'lib/supabase';
 
 export default function Profile() {
     const [editing, setEditing] = useState(false);
-    const {session} = useAuth();
+    const { session } = useAuth();
 
     const [loading, setLoading] = useState(true)
     const [username, setUsername] = useState('')
@@ -27,29 +27,29 @@ export default function Profile() {
 
     async function getProfile() {
         try {
-        setLoading(true)
-        if (!session?.user) throw new Error('No user on the session!')
+            setLoading(true)
+            if (!session?.user) throw new Error('No user on the session!')
 
-        const { data, error, status } = await supabase
-            .from('profiles')
-            .select(`username, website, avatar_url`)
-            .eq('id', session?.user.id)
-            .single()
-        if (error && status !== 406) {
-            throw error
-        }
+            const { data, error, status } = await supabase
+                .from('profiles')
+                .select(`username, website, avatar_url`)
+                .eq('id', session?.user.id)
+                .single()
+            if (error && status !== 406) {
+                throw error
+            }
 
-        if (data) {
-            setUsername(data.username)
-            setWebsite(data.website)
-            setAvatarUrl(data.avatar_url)
-        }
+            if (data) {
+                setUsername(data.username)
+                setWebsite(data.website)
+                setAvatarUrl(data.avatar_url)
+            }
         } catch (error) {
-        if (error instanceof Error) {
-            Alert.alert(error.message)
-        }
+            if (error instanceof Error) {
+                Alert.alert(error.message)
+            }
         } finally {
-        setLoading(false)
+            setLoading(false)
         }
     }
 
@@ -63,28 +63,28 @@ export default function Profile() {
         avatar_url: string
     }) {
         try {
-        setLoading(true)
-        if (!session?.user) throw new Error('No user on the session!')
+            setLoading(true)
+            if (!session?.user) throw new Error('No user on the session!')
 
-        const updates = {
-            id: session?.user.id,
-            username,
-            website,
-            avatar_url,
-            updated_at: new Date(),
-        }
+            const updates = {
+                id: session?.user.id,
+                username,
+                website,
+                avatar_url,
+                updated_at: new Date(),
+            }
 
-        const { error } = await supabase.from('profiles').upsert(updates)
+            const { error } = await supabase.from('profiles').upsert(updates)
 
-        if (error) {
-            throw error
-        }
+            if (error) {
+                throw error
+            }
         } catch (error) {
-        if (error instanceof Error) {
-            Alert.alert(error.message)
-        }
+            if (error instanceof Error) {
+                Alert.alert(error.message)
+            }
         } finally {
-        setLoading(false)
+            setLoading(false)
         }
     }
 
