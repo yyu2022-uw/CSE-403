@@ -18,8 +18,10 @@ export default function Profile() {
 
     const [loading, setLoading] = useState(true)
     const [username, setUsername] = useState('')
-    const [website, setWebsite] = useState('')
+    const [fullName, setFullName] = useState('')
     const [avatarUrl, setAvatarUrl] = useState('')
+    const [website, setWebsite] = useState('')
+    const [bio, setBio] = useState('')
 
     useEffect(() => {
         if (session) getProfile()
@@ -32,7 +34,7 @@ export default function Profile() {
 
             const { data, error, status } = await supabase
                 .from('profiles')
-                .select(`username, website, avatar_url`)
+                .select(`full_name, website, avatar_url`)
                 .eq('id', session?.user.id)
                 .single()
             if (error && status !== 406) {
@@ -40,7 +42,7 @@ export default function Profile() {
             }
 
             if (data) {
-                setUsername(data.username)
+                setFullName(data.full_name)
                 setWebsite(data.website)
                 setAvatarUrl(data.avatar_url)
             }
@@ -53,11 +55,41 @@ export default function Profile() {
         }
     }
 
+    async function updateProfile({
+        website,
+        avatarUrl,
+        bio,
+        username,
+        fullName,
+    }: {
+        username: string;
+        website: string;
+        avatarUrl: string;
+        bio: string;
+        fullName: string;
+    }) {
+
+        console.log("inside updateProfile")
+        let { data, error } = await supabase
+            .rpc('update_user_profile', {
+                p_avatar_url: avatarUrl,
+                p_bio: bio,
+                p_full_name: fullName,
+                p_id: session?.user.id, // keep the same id
+                p_username: username, // TODO: make sure new username is not already taken
+                p_website: website,
+            })
+        if (error) console.error(error)
+        else console.log(data)
+
+    }
+
     return (
         <SafeAreaView style={styles.container}>
+            {/* <SafeAreaView> */}
             <ScrollView>
                 <ProfileTag
-                    username={username}
+                    fullName={fullName}
                     avatarUrl={avatarUrl}
                     editing={editing}
                 />
@@ -87,10 +119,12 @@ export default function Profile() {
                         </View>
                     ) : null}
                 </View>
+                <Text>{session?.user.id}</Text>
             </ScrollView>
             <EditProfileButton
                 editing={editing}
                 setEditing={setEditing}
+                onUpdate={() => updateProfile({ username, fullName, website, bio, avatarUrl })} // Update profile on button press
             />
         </SafeAreaView >
     );
@@ -130,7 +164,7 @@ export default function Profile() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        display: 'flex',
         backgroundColor: 'white',
     },
     subtitle: {

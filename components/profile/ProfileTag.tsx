@@ -9,27 +9,32 @@ import { Colors } from '@Colors';
 import { supabase } from 'lib/supabase';
 
 interface ProfileTagProps {
-    username: string;
+    fullName: string;
     avatarUrl: string;
     editing: boolean;
 }
 
-const ProfileTag: React.FC<ProfileTagProps> = ({ username, avatarUrl, editing }) => {
+const ProfileTag: React.FC<ProfileTagProps> = ({ fullName, avatarUrl, editing }) => {
+
+    if (!avatarUrl) {
+        avatarUrl = 'https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG-Download-Image.png'
+    }
+
     const { session } = useAuth();
-    const [editableName, setEditableName] = useState(username);
+    const [editableName, setEditableName] = useState(fullName);
     const [selectedImage, setSelectedImage] = useState(avatarUrl);
 
     async function updateName({
-        username,
+        fullName,
     }: {
-        username: string
+        fullName: string
     }) {
         try {
             if (!session?.user) throw new Error('No user on the session!')
 
             const updates = {
                 id: session?.user.id,
-                username,
+                fullName,
                 updated_at: new Date(),
             }
 
@@ -45,6 +50,30 @@ const ProfileTag: React.FC<ProfileTagProps> = ({ username, avatarUrl, editing })
         } finally {
         }
     }
+
+    // Function to pick an image from the gallery
+    const saveImage = async () => {
+        // Ask for permissions
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('Permission Denied', 'Sorry, we need camera roll permissions to make this work!');
+            return;
+        }
+
+        // Open image picker
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            // Update the selected image
+            setSelectedImage(result.assets[0].uri);
+            // setUser({ ...user, pictureUrl: result.assets[0].uri });  // Save to context
+        }
+    };
 
     return (
         <View style={styles.container}>
