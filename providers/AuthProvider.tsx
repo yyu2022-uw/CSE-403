@@ -1,56 +1,64 @@
-import { Session, User } from "@supabase/auth-js";
-import { supabase } from "lib/supabase";
-import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
+import {
+  PropsWithChildren,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+import { Session, User } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
+import { tokenProvider } from '../utils/tokenProvider';
 
 type AuthContext = {
-    session: Session | null;
-    user: User | null;
-    profile: any | null;
-}
+  session: Session | null;
+  user: User | null;
+  profile: any | null;
+};
 
 const AuthContext = createContext<AuthContext>({
-    session: null, user: null, profile: null
+  session: null,
+  user: null,
+  profile: null,
 });
 
-export default function AuthProvider ({children}: PropsWithChildren) {
-    const [session, setSession] = useState<Session | null>(null)
-    const [profile, setProfile] = useState<any | null>();
+export default function AuthProvider({ children }: PropsWithChildren) {
+  const [session, setSession] = useState<Session | null>(null);
+  // Added typing here
+  const [profile, setProfile] = useState<any | null>();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-    })
+      setSession(session);
+    });
 
     supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-  }, [])
+      setSession(session);
+    });
+  }, []);
 
   useEffect(() => {
-    if(!session?.user) {
+    if (!session?.user) {
       setProfile(null);
       return;
     }
 
     const fetchProfile = async () => {
-      console.log('Starting fetchProfile');
-      let {data, error} = await supabase
+      let { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', session.user.id)
         .single();
-      
-        console.log('From fetchProfile: ' + data);
       setProfile(data);
-    }
+    };
     fetchProfile();
-  }, [session?.user])
+  }, [session?.user]);
 
-  return(
-      <AuthContext.Provider value={{session, user: session?.user ?? null, profile}}>
-          {children}
-      </AuthContext.Provider>
-  )
+  return (
+    // Added an exclamation here
+    <AuthContext.Provider value={{ session, user: session?.user!, profile }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export const useAuth = () => useContext(AuthContext);
