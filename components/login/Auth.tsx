@@ -1,18 +1,7 @@
 import React, { useState } from 'react'
-import { Alert, StyleSheet, View, AppState, Button, TextInput } from 'react-native'
+import { Alert, StyleSheet, View } from 'react-native'
 import { supabase } from '../../lib/supabase'
-
-// Tells Supabase Auth to continuously refresh the session automatically if
-// the app is in the foreground. When this is added, you will continue to receive
-// `onAuthStateChange` events with the `TOKEN_REFRESHED` or `SIGNED_OUT` event
-// if the user's session is terminated. This should only be registered once.
-AppState.addEventListener('change', (state) => {
-    if (state === 'active') {
-        supabase.auth.startAutoRefresh()
-    } else {
-        supabase.auth.stopAutoRefresh()
-    }
-})
+import { Button, Input } from '@rneui/themed'
 
 export default function Auth() {
     const [email, setEmail] = useState('')
@@ -20,20 +9,17 @@ export default function Auth() {
     const [loading, setLoading] = useState(false)
 
     async function signInWithEmail() {
-        console.log("inside signInWithEmail");
         setLoading(true)
         const { error } = await supabase.auth.signInWithPassword({
             email: email,
             password: password,
         })
 
-        //console.log(error);
         if (error) Alert.alert(error.message)
         setLoading(false)
     }
 
     async function signUpWithEmail() {
-        console.log("inside signUpWithEmail");
         setLoading(true)
         const {
             data: { session },
@@ -44,14 +30,16 @@ export default function Auth() {
         })
 
         if (error) Alert.alert(error.message)
-        else if (!session) Alert.alert('Please check your inbox for email verification!')
+        if (!session) Alert.alert('Please check your inbox for email verification!')
         setLoading(false)
     }
 
     return (
         <View style={styles.container}>
             <View style={[styles.verticallySpaced, styles.mt20]}>
-                <TextInput
+                <Input
+                    label="Email"
+                    leftIcon={{ type: 'font-awesome', name: 'envelope' }}
                     onChangeText={(text) => setEmail(text)}
                     value={email}
                     placeholder="email@address.com"
@@ -59,7 +47,9 @@ export default function Auth() {
                 />
             </View>
             <View style={styles.verticallySpaced}>
-                <TextInput
+                <Input
+                    label="Password"
+                    leftIcon={{ type: 'font-awesome', name: 'lock' }}
                     onChangeText={(text) => setPassword(text)}
                     value={password}
                     secureTextEntry={true}

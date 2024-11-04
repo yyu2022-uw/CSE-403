@@ -1,7 +1,7 @@
 // AppScreen.tsx
 import { View } from 'react-native';
 import { AuthProvider, useAuth } from 'providers/AuthProvider';
-import Auth from '../components/Auth';
+import Auth from '../components/login/Auth';
 import Profile from './(home)/(tabs)/profile';
 import CommunitiesScreen from './(home)/(tabs)/communities';
 
