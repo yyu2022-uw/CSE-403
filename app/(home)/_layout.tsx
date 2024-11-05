@@ -4,9 +4,11 @@ import { useAuth } from '../../providers/AuthProvider'
 
 export default function HomeLayout() {
 
-    const {user} = useAuth();
+    const { session } = useAuth();
 
-    if(!user) {
+    console.log("From HomeLayout: " + session);
+
+    if (!session) {
         return <Redirect href="/(auth)/login" />;
     }
 

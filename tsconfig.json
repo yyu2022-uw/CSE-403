@@ -11,7 +11,8 @@
       "@Colors": ["constants/Colors.ts"],
       "@Spacing": ["constants/Spacing.ts"],
       "@Sizes": ["constants/Sizes.ts"],
-      "@useUser": ["hooks/useUser.tsx"]
+      "@useUser": ["hooks/useUser.tsx"],
+      "@useAuth": ["providers/AuthProvider.tsx"]
     }
   },
   "include": [

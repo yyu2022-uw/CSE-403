@@ -4,21 +4,52 @@ import { spacing } from '@Spacing'
 import React, { useState } from 'react';
 import { sizes } from '@Sizes';
 import { TextInput } from 'react-native-gesture-handler';
-import { useUser } from '@useUser';
+import { useAuth } from '@useAuth';
 import { Colors } from '@Colors';
+import { supabase } from 'lib/supabase';
 
 interface ProfileTagProps {
+    fullName: string;
+    avatarUrl: string;
     editing: boolean;
 }
 
-const ProfileTag: React.FC<ProfileTagProps> = ({ editing }) => {
-    const { user, setUser } = useUser();
-    const [editableName, setEditableName] = useState(user.name);
-    const [selectedImage, setSelectedImage] = useState(user.pictureUrl);
+const ProfileTag: React.FC<ProfileTagProps> = ({ fullName, avatarUrl, editing }) => {
 
-    const saveName = () => {
-        setUser({ ...user, name: editableName });
-    };
+    if (!avatarUrl) {
+        avatarUrl = 'https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG-Download-Image.png'
+    }
+
+    const { session } = useAuth();
+    const [editableName, setEditableName] = useState(fullName);
+    const [selectedImage, setSelectedImage] = useState(avatarUrl);
+
+    async function updateName({
+        fullName,
+    }: {
+        fullName: string
+    }) {
+        try {
+            if (!session?.user) throw new Error('No user on the session!')
+
+            const updates = {
+                id: session?.user.id,
+                fullName,
+                updated_at: new Date(),
+            }
+
+            const { error } = await supabase.from('profiles').upsert(updates)
+
+            if (error) {
+                throw error
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                Alert.alert(error.message)
+            }
+        } finally {
+        }
+    }
 
     // Function to pick an image from the gallery
     const saveImage = async () => {
@@ -40,7 +71,7 @@ const ProfileTag: React.FC<ProfileTagProps> = ({ editing }) => {
         if (!result.canceled) {
             // Update the selected image
             setSelectedImage(result.assets[0].uri);
-            setUser({ ...user, pictureUrl: result.assets[0].uri });  // Save to context
+            // setUser({ ...user, pictureUrl: result.assets[0].uri });  // Save to context
         }
     };
 
@@ -54,7 +85,7 @@ const ProfileTag: React.FC<ProfileTagProps> = ({ editing }) => {
                     style={[sizes.title, styles.input]}
                     value={editableName}
                     onChangeText={setEditableName}
-                    onBlur={saveName}  // Save name when input loses focus
+                    // onBlur={saveName}  // Save name when input loses focus
                     placeholder="Edit Name"
                     placeholderTextColor={Colors.light.placeholderText}
                 />
