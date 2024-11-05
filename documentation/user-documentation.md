@@ -1,0 +1,25 @@
+# User Documentation
+
+## Description
+
+InterConnect is an application that runs on Android and iOS aiming at helping people who want to get into a new hobby or skill by connecting them with a volunteer mentor who is already knowledgeable about the given topic.
+
+## How to Install
+
+(Download on App Store)
+
+## How to Run
+
+(Run as an app on your device)
+
+## How to Use
+
+On a mobile device as an app
+
+## How to Report Bugs
+
+Email our company email
+
+## Known bugs
+
+(None encountered so far)
