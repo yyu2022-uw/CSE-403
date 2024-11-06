@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "rea
 import { supabase } from "lib/supabase";
 import { useEffect, useState } from "react";
 
-export default function MentorCommunityScreen({ route }) {
+export default function MentorCommunityScreen({ route } ) {
   const {cid, name} = route.params;
   const router = useRouter();
   const [mentors, setMentors] = useState<String[]>([]);
@@ -12,15 +12,11 @@ export default function MentorCommunityScreen({ route }) {
   useEffect(() => {
     const fetchMentors = async () => {
       try {
-        let { data: communityMentors, error } = await supabase
+        let { data: communityMentors } = await supabase
           .from('mentor_communities')
           .select('profiles (full_name)')
           .eq('cid', cid)
           .limit(3);
-
-        if (error) {
-          throw error;
-        }
 
         if (communityMentors) {
           const mentors = communityMentors.map((cm: any) => cm.profiles.full_name);

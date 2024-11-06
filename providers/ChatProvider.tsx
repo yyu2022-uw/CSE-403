@@ -1,5 +1,5 @@
 import { PropsWithChildren, useEffect, useState } from "react";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { StreamChat } from 'stream-chat';
 import { Chat, OverlayProvider } from 'stream-chat-expo';
 import { useAuth } from "./AuthProvider";
@@ -14,23 +14,29 @@ export default function ChatProvider ({children}: PropsWithChildren) {
     const profile = useAuth()?.profile;
 
     useEffect(() => {
-        if(!profile) {
+      console.log(profile);
+        if (!profile) {
             return;
         }
 
         console.log("From chatProvider: " + profile.id);
 
         const connect = async () => {
+          try {
             await client.connectUser(
-                {
-                    id: profile.id,
-                    name: profile.full_name,
-                    image: 'https://i.imgur.com/fR9Jz14.png',
-                },
-                client.devToken(profile.id),
+              {
+                  id: profile.id,
+                  name: profile.full_name,
+                  image: 'https://i.imgur.com/fR9Jz14.png',
+              },
+              client.devToken(profile.id),
             );
             setIsReady(true);
-        }
+          } catch(err) {
+            console.log(profile);
+            console.error(err);
+          }
+        };
 
         connect();
 
@@ -43,8 +49,11 @@ export default function ChatProvider ({children}: PropsWithChildren) {
     }, [profile?.id])
 
     if(!isReady) {
-        // Make some styling for this later
-        return <ActivityIndicator />;
+      return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+      );
     }
 
     return (

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, View, Text, Alert } from 'react-native';
 import InterestsList from '@/components/profile/InterestsList';
-import Bio from '@/components/profile/Bio';
 import ProfileTag from '@/components/profile/ProfileTag';
 import { spacing } from '@Spacing';
 import { sizes } from '@Sizes';
@@ -14,7 +13,9 @@ import { supabase } from 'lib/supabase';
 
 export default function Profile() {
     const [editing, setEditing] = useState(false);
-    const { session } = useAuth();
+    const session = useAuth()?.session;
+    const user = useAuth()?.user;
+    const profile = useAuth()?.profile;
 
     const [loading, setLoading] = useState(true)
     const [username, setUsername] = useState('')
