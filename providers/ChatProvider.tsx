@@ -1,4 +1,3 @@
-
 import { PropsWithChildren, useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { StreamChat } from 'stream-chat';
@@ -12,9 +11,7 @@ const client = StreamChat.getInstance(process.env.EXPO_PUBLIC_STREAM_API_KEY!);
 
 export default function ChatProvider ({children}: PropsWithChildren) {
     const [isReady, setIsReady] = useState(false);
-    const { profile } = useAuth();
-
-    
+    const profile = useAuth()?.profile;
 
     useEffect(() => {
         if(!profile) {
@@ -33,14 +30,6 @@ export default function ChatProvider ({children}: PropsWithChildren) {
                 client.devToken(profile.id),
             );
             setIsReady(true);
-
-            // const channel = client.channel('messaging', 'just_chatting', {
-            //     // image: 'https://cdn.com/image.png',
-            //     name: 'Just Chatting',
-            //     // members: ['dave-matthews', 'trey-anastasio'],
-            //     // option to add custom fields
-            // });
-            // await channel.watch();
         }
 
         connect();
@@ -62,6 +51,6 @@ export default function ChatProvider ({children}: PropsWithChildren) {
         <OverlayProvider>
             <Chat client={client}>{children}</Chat>
         </OverlayProvider>
-            
+
     )
 }
