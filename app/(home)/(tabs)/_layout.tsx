@@ -1,7 +1,7 @@
 import { Tabs } from "expo-router";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import { UserProvider } from "../../../context/UserContext";
+import { UserProvider } from "../../../providers/UserProvider";
 
 export default function TabNavigator() {
     return <UserProvider>

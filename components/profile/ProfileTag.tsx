@@ -4,7 +4,7 @@ import { spacing } from '@Spacing'
 import React, { useState } from 'react';
 import { sizes } from '@Sizes';
 import { TextInput } from 'react-native-gesture-handler';
-import { useAuth } from '@useAuth';
+import { useAuth } from 'providers/AuthProvider';
 import { Colors } from '@Colors';
 import { supabase } from 'lib/supabase';
 
