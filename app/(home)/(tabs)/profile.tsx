@@ -13,9 +13,8 @@ import { supabase } from 'lib/supabase';
 import Bio from '@/components/profile/Bio';
 
 export default function Profile() {
-    const [editing, setEditing] = useState(false);
     const auth = useAuth();
-
+    const [editing, setEditing] = useState(false);
     const [loading, setLoading] = useState(true)
     const [username, setUsername] = useState('placeholder_username')
     const [fullName, setFullName] = useState('')
