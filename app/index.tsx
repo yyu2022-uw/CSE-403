@@ -9,7 +9,7 @@ import { Redirect } from 'expo-router';
 export default function AppScreen() {
   const auth = useAuth();
 
-  /*
+  
   if (auth?.loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -17,7 +17,7 @@ export default function AppScreen() {
       </View>
     );
   }
-    */
+    
 
   if (auth?.session && auth?.user) {
     // Redirect to home page
