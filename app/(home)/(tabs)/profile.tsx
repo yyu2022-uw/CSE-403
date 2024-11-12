@@ -10,33 +10,31 @@ import EditProfileButton from '@/components/profile/EditProfileButton';
 import FindNewInterestMessage from '@/components/profile/FindNewInterestMessage';
 import { useAuth } from 'providers/AuthProvider';
 import { supabase } from 'lib/supabase';
+import Bio from '@/components/profile/Bio';
 
 export default function Profile() {
+    const auth = useAuth();
     const [editing, setEditing] = useState(false);
-    const session = useAuth()?.session;
-    const user = useAuth()?.user;
-    const profile = useAuth()?.profile;
-
     const [loading, setLoading] = useState(true)
-    const [username, setUsername] = useState('')
+    const [username, setUsername] = useState('placeholder_username')
     const [fullName, setFullName] = useState('')
     const [avatarUrl, setAvatarUrl] = useState('')
     const [website, setWebsite] = useState('')
     const [bio, setBio] = useState('')
 
     useEffect(() => {
-        if (session) getProfile()
-    }, [session])
+        if (auth?.session) getProfile()
+    }, [auth?.session])
 
     async function getProfile() {
         try {
             setLoading(true)
-            if (!session?.user) throw new Error('No user on the session!')
+            if (!auth?.session?.user) throw new Error('No user on the session!')
 
             const { data, error, status } = await supabase
                 .from('profiles')
                 .select(`full_name, website, avatar_url`)
-                .eq('id', session?.user.id)
+                .eq('id', auth?.session?.user.id)
                 .single()
             if (error && status !== 406) {
                 throw error
@@ -56,48 +54,17 @@ export default function Profile() {
         }
     }
 
-    async function updateProfile({
-        website,
-        avatarUrl,
-        bio,
-        username,
-        fullName,
-    }: {
-        username: string;
-        website: string;
-        avatarUrl: string;
-        bio: string;
-        fullName: string;
-    }) {
-
-        console.log("inside updateProfile")
-        let { data, error } = await supabase
-            .rpc('update_user_profile', {
-                p_avatar_url: avatarUrl,
-                p_bio: bio,
-                p_full_name: fullName,
-                p_id: session?.user.id, // keep the same id
-                p_username: username, // TODO: make sure new username is not already taken
-                p_website: website,
-            })
-        if (error) console.error(error)
-        else console.log(data)
-
-    }
-
     return (
         <SafeAreaView style={styles.container}>
             {/* <SafeAreaView> */}
             <ScrollView>
                 <ProfileTag
-                    fullName={fullName}
-                    avatarUrl={avatarUrl}
                     editing={editing}
                 />
                 <Text style={[sizes.subtitle, styles.subtitle]}>
                     Bio
                 </Text>
-                {/* <Bio editing={editing} /> */}
+                <Bio editing={editing} />
                 <Divider margin={spacing} />
                 <View style={styles.interests}>
                     <View style={styles.interestsLists}>
@@ -120,51 +87,24 @@ export default function Profile() {
                         </View>
                     ) : null}
                 </View>
-                <Text>{session?.user.id}</Text>
+                <Divider margin={spacing} />
+                <View style={styles.userId}>
+                    <Text>User ID: {auth?.session?.user.id}</Text>
+                </View>
             </ScrollView>
             <EditProfileButton
                 editing={editing}
                 setEditing={setEditing}
-                onUpdate={() => updateProfile({ username, fullName, website, bio, avatarUrl })} // Update profile on button press
+                // onUpdate={() => updateProfile({ username, fullName, website, bio, avatarUrl })}
+                onUpdate={() => { }} // Update profile on button press
             />
-        </SafeAreaView >
+        </SafeAreaView>
     );
-
-    // Pasting this code in here; this is what the tutorial uses for it's profile page. 
-    // Putting it here for easy reference
-
-    /*
-    return (
-    <View style={styles.container}>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Input label="Email" value={session?.user?.email} disabled />
-      </View>
-      <View style={styles.verticallySpaced}>
-        <Input label="Username" value={username || ''} onChangeText={(text) => setUsername(text)} />
-      </View>
-      <View style={styles.verticallySpaced}>
-        <Input label="Website" value={website || ''} onChangeText={(text) => setWebsite(text)} />
-      </View>
-
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button
-          title={loading ? 'Loading ...' : 'Update'}
-          onPress={() => updateProfile({ username, website, avatar_url: avatarUrl })}
-          disabled={loading}
-        />
-      </View>
-
-      <View style={styles.verticallySpaced}>
-        <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
-      </View>
-    </View>
-    )
-    */
-
 }
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         display: 'flex',
         backgroundColor: 'white',
     },
@@ -188,5 +128,8 @@ const styles = StyleSheet.create({
     },
     newInterestMessage: {
         paddingTop: 8
+    },
+    userId: {
+        alignItems: 'center',
     }
 })

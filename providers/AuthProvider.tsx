@@ -18,10 +18,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   useEffect(() => {
     const fetchSession = async () => {
-      // await supabase.auth.signOut(); // Uncomment this whenever you want to end the session (log the user out)
+      try {
+      await supabase.auth.signOut(); // Uncomment this whenever you want to end the session (log the user out)
       const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
       setLoading(false);
+      } catch (err) {
+        console.error(err);
+      }
     };
 
     fetchSession();
@@ -45,13 +49,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const fetchProfile = async () => {
       try {
         let { data } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session.user.id)
-        .single();
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
         setProfile(data);
-
-      } catch(err) {
+      } catch (err) {
         console.log(session);
         console.error(err);
       }
