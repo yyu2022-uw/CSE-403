@@ -18,10 +18,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   useEffect(() => {
     const fetchSession = async () => {
+      try {
       await supabase.auth.signOut(); // Uncomment this whenever you want to end the session (log the user out)
       const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
       setLoading(false);
+      } catch (err) {
+        console.error(err);
+      }
     };
 
     fetchSession();
