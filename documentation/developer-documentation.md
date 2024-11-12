@@ -20,7 +20,7 @@ Welcome to the developer documentation for **InterConnect**. This document provi
 To obtain the source code, you’ll need access to the project’s repository on GitHub:
 
 1. Clone the repository using the following command:
-   
+
    ```bash
    git clone https://github.com/yyu2022-uw/CSE-403.git
    ```
@@ -29,7 +29,7 @@ To obtain the source code, you’ll need access to the project’s repository on
 
 ## Layout of the Directory Structure
 
- - `__test__` 
+ - `__test__`
  - `app/`: All source code regarding the app
    - `(home)/`: The home screen of the app (directed to the communities page)
      - `(tabs)/`: The tabs of each parts of the app (profile, matching, chat, community)
@@ -51,7 +51,7 @@ To obtain the source code, you’ll need access to the project’s repository on
 ## How to Build the Software
 
 1. In the terminal, type in the following commands:
-   
+
    ```bash
    npm install
    npm start
@@ -60,9 +60,10 @@ To obtain the source code, you’ll need access to the project’s repository on
 ---
 
 ## How to Test the Software
+1. Test will run when pushing/merging to main
 
-1. Run the following command:
-   
+2. Or run the following command:
+
    ```bash
    npm test
    ```
