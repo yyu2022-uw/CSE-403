@@ -45,13 +45,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const fetchProfile = async () => {
       try {
         let { data } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session.user.id)
-        .single();
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
         setProfile(data);
-
-      } catch(err) {
+      } catch (err) {
         console.log(session);
         console.error(err);
       }
