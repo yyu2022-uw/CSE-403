@@ -1,9 +1,8 @@
 import { useAuth } from "../../../providers/AuthProvider";
-import { Slot, Stack } from "expo-router";
-import { View, Text } from "react-native";
+import { Text } from "react-native";
 
 export default function CommunitiesScreen() {
-    const { session, loading } = useAuth();
+    const auth = useAuth();
 
-    return <Text>{session?.user.id}</Text>
+    return <Text>{auth?.session?.user.id}</Text>
 }

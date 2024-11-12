@@ -1,26 +1,54 @@
 import { View, Text, StyleSheet, TextInput } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { spacing } from '@Spacing'
 import { sizes } from '@Sizes'
-import { useUser } from '@useUser';
 import { Colors } from '@Colors';
+import { useAuth } from '@useAuth';
+import { supabase } from 'lib/supabase';
 
 interface BioProps {
     editing: boolean;
 }
 
 export default function Bio({ editing }: BioProps) {
-    const { user, setUser } = useUser();
-    const [editableBioText, setEditableBioText] = useState(user.bio);
+    const auth = useAuth();
+    const [editableBioText, setEditableBioText] = useState(auth?.profile?.bio);
 
-    const saveBio = () => {
-        setUser({ ...user, bio: editableBioText });
+    // Watch for `editing` to change and trigger `updateProfile` when it becomes 0 (false)
+    useEffect(() => {
+        if (!editing) {
+            updateProfile({
+                bio: editableBioText,
+            });
+        }
+    }, [editing]);  // Only runs when `editing` changes
+
+    const updateProfile = async ({
+        bio,
+    }: {
+        bio: string;
+    }) => {
+        if (!auth?.session?.user?.id) {
+            console.error("User ID is undefined. Cannot update profile.");
+            return;
+        }
+
+        const { data, error } = await supabase
+            .from('profiles')
+            .update([
+                { bio },
+            ])
+            .eq('id', auth?.session?.user.id)
+            .select();
+
+        if (error) console.error(error);
+        else console.log("Profile updated successfully:", data);
     };
 
     if (!editing) {
         return (
             <View style={styles.container}>
-                <Text style={sizes.plainText}>{user.bio}</Text>
+                <Text style={sizes.plainText}>{editableBioText}</Text>
             </View>
         );
     } else {
@@ -30,7 +58,6 @@ export default function Bio({ editing }: BioProps) {
                     style={[sizes.plainText, styles.input]}
                     value={editableBioText}
                     onChangeText={setEditableBioText}
-                    onBlur={saveBio}
                     placeholder="Write your biography..."
                     placeholderTextColor={Colors.light.placeholderText}
                 />

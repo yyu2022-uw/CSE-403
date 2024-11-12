@@ -1,14 +1,6 @@
-import { View, Text } from 'react-native'
-import { Link, Redirect } from 'expo-router'
+import { Redirect } from 'expo-router'
+import { Text } from 'react-native-svg'
 
 export default function HomeScreen() {
-    // return (
-    //     <View>
-    //         <Text>Home screen</Text>
-    //     </View>
-    // )
-
-    return (
-        <Redirect href={'/(home)/(tabs)/communities'} />
-    )
+  return <Redirect href={'/(home)/(tabs)/communities'} />;
 }

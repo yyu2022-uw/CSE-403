@@ -1,21 +1,20 @@
 import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { supabase } from 'lib/supabase';
-import { useAuth } from 'context/AuthContext';
-import { Redirect } from 'expo-router';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import MentorCommunityScreen from '.';
+import Auth from '@/components/login/Auth';
+import { useAuth } from '@useAuth';
 
 const Drawer = createDrawerNavigator();
 
 export default function DrawerNavigator() {
   const [communities, setCommunities] = useState<{ cid: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
-  // const { user } = useAuth();
-  const user = '216e4cc6-3e5e-4d30-a033-5690963dccce';
+  const user = useAuth()?.user;
 
   if (!user) {
-    return <Redirect href="/(auth)/login" />;
+    return <Auth />;
   }
 
   useEffect(() => {

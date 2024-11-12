@@ -1,14 +1,14 @@
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Channel as ChannelType } from "stream-chat";
-import { ActivityIndicator, Text } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { Channel, MessageList, MessageInput, useChatContext } from "stream-chat-expo";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ChannelScreen() {
-    const [channel, setChannel] = useState<ChannelType | null>(null)
-    const { cid } = useLocalSearchParams<{ cid: string }>()
-    const { client } = useChatContext()
+    const [channel, setChannel] = useState<ChannelType | null>(null);
+    const { cid } = useLocalSearchParams<{ cid: string }>();
+    const { client } = useChatContext();
 
     useEffect(() => {
         const fetchChannel = async () => {
@@ -17,10 +17,14 @@ export default function ChannelScreen() {
         }
 
         fetchChannel()
-    }, [cid])
+    }, [cid]);
 
     if (!channel) {
-        return <ActivityIndicator />
+        return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" />
+        </View>
+        );
     }
 
     return (
@@ -30,6 +34,5 @@ export default function ChannelScreen() {
                 <MessageInput />
             </SafeAreaView>
         </Channel>
-    )
-
+    );
 }

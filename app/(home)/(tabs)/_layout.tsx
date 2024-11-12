@@ -1,11 +1,12 @@
 import { Tabs } from "expo-router";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import { UserProvider } from "../../../context/UserContext";
+import { AuthProvider } from "@useAuth";
 
 export default function TabNavigator() {
-    return <UserProvider>
-        <Tabs>
+    console.log('in tabs');
+    return <AuthProvider>
+          <Tabs>
             <Tabs.Screen
                 name="communities"
                 options={{
@@ -36,5 +37,5 @@ export default function TabNavigator() {
                 }}
             />
         </Tabs>
-    </UserProvider>
+      </AuthProvider>
 }

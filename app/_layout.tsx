@@ -1,5 +1,5 @@
 import { AuthProvider } from "../providers/AuthProvider";
-import { Stack, Slot } from "expo-router";
+import { Slot } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 
 export default function RootLayout() {
@@ -7,5 +7,5 @@ export default function RootLayout() {
     <AuthProvider>
       <Slot />
     </AuthProvider>
-  </GestureHandlerRootView >
+  </GestureHandlerRootView >;
 }
