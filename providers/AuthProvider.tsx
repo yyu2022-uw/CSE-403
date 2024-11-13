@@ -49,9 +49,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     try {
-
-      // console.log(session.user.id);
-
       const fetchProfile = async () => {
         try {
           let { data } = await supabase
@@ -106,7 +103,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }));
 
             setMentorInterests(interests);
-            console.log(interests);
           }
         } catch (err) {
           console.log("mentor interests: " + mentorInterests);
@@ -154,7 +150,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }));
 
             setMenteeInterests(interests);
-            console.log("mentee interests: " + menteeInterests);
           }
         } catch (err) {
           console.log(menteeInterests);

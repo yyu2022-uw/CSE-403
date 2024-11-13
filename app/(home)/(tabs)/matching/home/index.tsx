@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { supabase } from "lib/supabase";
 import { useEffect, useState } from "react";
+import HomeScreen from "app/(home)";
 
 export default function MentorCommunityScreen({ route } ) {
   const {cid, name} = route.params;
@@ -12,7 +13,7 @@ export default function MentorCommunityScreen({ route } ) {
   useEffect(() => {
     const fetchMentors = async () => {
       try {
-        let { data: communityMentors } = await supabase
+        let { data: communityMentors} = await supabase
           .from('mentor_communities')
           .select('profiles (full_name)')
           .eq('cid', cid)
@@ -23,7 +24,7 @@ export default function MentorCommunityScreen({ route } ) {
           setMentors(mentors);
         }
         setLoading(false);
-        
+
       } catch (error) {
         console.error('Failed to fetch community mentors:', error);
         setLoading(false);
@@ -58,7 +59,7 @@ export default function MentorCommunityScreen({ route } ) {
           <Text style={styles.mentorName}>{mentor}</Text>
         </TouchableOpacity>
       ))}
-      
+
       <TouchableOpacity style={styles.button} onPress={() => router.push('/(home)/(tabs)/matching/detail/match')}>
         <Text style={styles.buttonText}>Click To Be Matched With A Mentor</Text>
       </TouchableOpacity>
