@@ -10,8 +10,8 @@ interface Profile {
   bio: string;
 }
 
-export default function MentorCommunityScreen({ route } ) {
-  const {cid, name} = route.params;
+export default function MentorCommunityScreen({ route }) {
+  const { cid, name } = route.params;
   const router = useRouter();
   const [mentors, setMentors] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,19 +60,19 @@ export default function MentorCommunityScreen({ route } ) {
     <View style={styles.container}>
       <Text style={styles.title}>Recommended Mentors For The {name} Community</Text>
       {mentors.map((mentor, index) => (
-         <TouchableOpacity key={index} style={styles.card} onPress={() =>
+        <TouchableOpacity key={index} style={styles.card} onPress={() =>
           router.push(
             `/(home)/(tabs)/matching/detail/mentorDetail?username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
           )}>
           <Text style={styles.mentorName}>{mentor.full_name}</Text>
         </TouchableOpacity>
       ))}
-    <TouchableOpacity
-      style={styles.button}
-      onPress={() => {router.push(`/(home)/(tabs)/matching/detail/match?cid=${cid}`)}}
-    >
-      <Text style={styles.buttonText}>Click To Be Matched With A Mentor</Text>
-    </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => { router.push(`/(home)/(tabs)/matching/detail/match?cid=${cid}`) }}
+      >
+        <Text style={styles.buttonText}>Click To Be Matched With A Mentor</Text>
+      </TouchableOpacity>
     </View>
   );
 }
