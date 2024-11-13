@@ -2,7 +2,6 @@ import { useRouter } from "expo-router";
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { supabase } from "lib/supabase";
 import { useEffect, useState } from "react";
-import HomeScreen from "app/(home)";
 
 export default function MentorCommunityScreen({ route } ) {
   const {cid, name} = route.params;
@@ -59,10 +58,12 @@ export default function MentorCommunityScreen({ route } ) {
           <Text style={styles.mentorName}>{mentor}</Text>
         </TouchableOpacity>
       ))}
-
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/(home)/(tabs)/matching/detail/match')}>
-        <Text style={styles.buttonText}>Click To Be Matched With A Mentor</Text>
-      </TouchableOpacity>
+    <TouchableOpacity
+      style={styles.button}
+      onPress={() => {router.push(`/(home)/(tabs)/matching/detail/match?cid=${cid}`)}}
+    >
+      <Text style={styles.buttonText}>Click To Be Matched With A Mentor</Text>
+    </TouchableOpacity>
     </View>
   );
 }

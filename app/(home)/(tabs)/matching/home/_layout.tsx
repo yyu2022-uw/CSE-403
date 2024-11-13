@@ -27,7 +27,8 @@ export default function DrawerNavigator() {
             cid,
             communities (name)
           `)
-          .eq('uid', user);
+          .eq('uid', user.id);
+
 
         if (userCommunities) {
           // Store both 'cid' and 'name' in the state
