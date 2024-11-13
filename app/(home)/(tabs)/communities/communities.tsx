@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useAuth } from '@useAuth';
 import CommunityPage from './communityPage'
+import editCommunities from './editCommunities';
 
 const Drawer = createDrawerNavigator();
 
@@ -40,6 +41,11 @@ function CommunitiesScreen() {
                         initialParams={{ name: interest.name }} // Pass initialParams with name
                     />
                 ))}
+                <Drawer.Screen
+                    key={0}
+                    name={"Edit communities"}
+                    component={editCommunities} // Pass component directly
+                />
             </Drawer.Navigator>
         </NavigationContainer>
     );

@@ -11,6 +11,7 @@ import FindNewInterestMessage from '@/components/profile/FindNewInterestMessage'
 import { useAuth } from 'providers/AuthProvider';
 import { supabase } from 'lib/supabase';
 import Bio from '@/components/profile/Bio';
+import { Redirect } from 'expo-router';
 
 export default function Profile() {
     const auth = useAuth();
@@ -97,7 +98,7 @@ export default function Profile() {
                 editing={editing}
                 setEditing={setEditing}
                 // onUpdate={() => updateProfile({ username, fullName, website, bio, avatarUrl })}
-                onUpdate={() => { }} // Update profile on button press
+                onUpdate={() => { }} // Update profile on button press (not currently using this, each component updates separately)
             />
         </SafeAreaView>
     );
