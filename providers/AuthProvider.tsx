@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { supabase } from 'lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
-import { Interest } from '@/data/interests'
+import { Interest, InterestList } from '@/data/interests'
 
 interface AuthContextType {
   session: Session | null;
@@ -41,7 +41,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   }, []);
 
-
   useEffect(() => {
     if (!session?.user) {
       setProfile(null);
@@ -49,60 +48,130 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return;
     }
 
-    console.log(session.user.id);
+    try {
 
-    const fetchProfile = async () => {
-      try {
-        let { data } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-        setProfile(data);
-      } catch (err) {
-        console.log(session);
-        console.error(err);
-      }
+      // console.log(session.user.id);
+
+      const fetchProfile = async () => {
+        try {
+          let { data } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+          setProfile(data);
+        } catch (err) {
+          console.log(session);
+          console.error(err);
+        }
+        setLoading(false);
+      };
+
+      fetchProfile();
+
+    } catch (err) {
+      console.error("Error fetching profile data:", err);
+    } finally {
       setLoading(false);
-    };
-
-    const fetchMentorInterests = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('user_interests')
-          .select('*')
-          .eq('uid', session.user.id)
-          .eq('is_mentor', true);
-        setMentorInterests(data as Interest[]);
-      } catch (err) {
-        console.log(session);
-        console.error(err);
-      }
-      setLoading(false);
-    };
-
-    const fetchMenteeInterests = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('user_interests')
-          .select('*')
-          .eq('uid', session.user.id)
-          .eq('is_mentor', false);
-        setMenteeInterests(data as Interest[]);
-      } catch (err) {
-        console.log(session);
-        console.error(err);
-      }
-      setLoading(false);
-    };
-
-    fetchProfile();
-    fetchMentorInterests();
-    fetchMenteeInterests();
+    }
 
   }, [session?.user]);
 
+  useEffect(() => {
+    if (!session?.user) {
+      setMentorInterests([]);
+      setLoading(false);
+      return;
+    }
 
+    try {
+
+      const fetchMentorInterests = async () => {
+        try {
+          let { data, error } = await supabase
+            .from('user_interests')
+            .select('interests(*)') // Get all fields from both user_interests and related interests
+            .eq('uid', session.user.id)
+            .eq('is_mentor', true);
+
+          if (error) throw error;
+
+          if (data) {
+            // Transform the data to match the expected structure
+            const interests: Interest[] = data.map((item: any) => ({
+              id: item.interests.id,
+              name: item.interests.name,
+              color: item.interests.color,
+              icon: item.interests.icon,
+            }));
+
+            setMentorInterests(interests);
+            console.log(interests);
+          }
+        } catch (err) {
+          console.log("mentor interests: " + mentorInterests);
+          console.error(err);
+        }
+        setLoading(false);
+      };
+
+      fetchMentorInterests();
+
+    } catch (err) {
+      console.error("Error fetching mentee data:", err);
+    } finally {
+      setLoading(false);
+    }
+
+  }, [session?.user]);
+
+  useEffect(() => {
+    if (!session?.user) {
+      setMenteeInterests([]);
+      setLoading(false);
+      return;
+    }
+
+    try {
+
+      const fetchMenteeInterests = async () => {
+        try {
+          let { data, error } = await supabase
+            .from('user_interests')
+            .select('interests(*)') // Get all fields from both user_interests and related interests
+            .eq('uid', session.user.id)
+            .eq('is_mentor', false);
+
+          if (error) throw error;
+
+          if (data) {
+            // Transform the data to match the expected structure
+            const interests: Interest[] = data.map((item: any) => ({
+              id: item.interests.id,
+              name: item.interests.name,
+              color: item.interests.color,
+              icon: item.interests.icon,
+            }));
+
+            setMenteeInterests(interests);
+            console.log("mentee interests: " + menteeInterests);
+          }
+        } catch (err) {
+          console.log(menteeInterests);
+          console.error(err);
+        }
+        setLoading(false);
+      };
+
+      fetchMenteeInterests();
+
+    } catch (err) {
+      console.error("Error fetching mentee data:", err);
+    } finally {
+      setLoading(false);
+    }
+
+  }, [session?.user]);
 
   return (
     // Added an exclamation here

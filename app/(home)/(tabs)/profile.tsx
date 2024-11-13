@@ -73,13 +73,13 @@ export default function Profile() {
                             <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
                                 Mentoring
                             </Text>
-                            <InterestsList interests={ } is_mentor={true} />
+                            <InterestsList interests={auth?.mentorInterests} is_mentor={true} />
                         </View>
                         <View>
                             <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
                                 Menteeing
                             </Text>
-                            <InterestsList interests={ } is_mentor={false} />
+                            <InterestsList interests={auth?.menteeInterests} is_mentor={false} />
                         </View>
                     </View>
                     {editing ? (
