@@ -1,3 +1,6 @@
+export interface InterestList {
+    interests: Interest;
+}
 export interface Interest {
     id: number;
     name: string;

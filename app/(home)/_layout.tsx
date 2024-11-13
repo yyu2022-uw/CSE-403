@@ -13,13 +13,12 @@ export default function HomeLayout() {
     if (!user) {
         return <Auth />
     }
-    
 
     return (
-        <ChatProvider>
-            <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            </Stack>
-        </ChatProvider>
+    <ChatProvider>
+        <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+    </ChatProvider>
     );
 }

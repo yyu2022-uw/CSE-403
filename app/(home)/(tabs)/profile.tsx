@@ -33,7 +33,7 @@ export default function Profile() {
 
             const { data, error, status } = await supabase
                 .from('profiles')
-                .select(`full_name, website, avatar_url`)
+                .select(`full_name, username, avatar_url, bio`)
                 .eq('id', auth?.session?.user.id)
                 .single()
             if (error && status !== 406) {
@@ -42,8 +42,9 @@ export default function Profile() {
 
             if (data) {
                 setFullName(data.full_name)
-                setWebsite(data.website)
+                setUsername(data.username)
                 setAvatarUrl(data.avatar_url)
+                setBio(data.bio)
             }
         } catch (error) {
             if (error instanceof Error) {
@@ -72,13 +73,13 @@ export default function Profile() {
                             <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
                                 Mentoring
                             </Text>
-                            <InterestsList />
+                            <InterestsList interests={auth?.mentorInterests} is_mentor={true} />
                         </View>
                         <View>
                             <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
                                 Menteeing
                             </Text>
-                            <InterestsList />
+                            <InterestsList interests={auth?.menteeInterests} is_mentor={false} />
                         </View>
                     </View>
                     {editing ? (

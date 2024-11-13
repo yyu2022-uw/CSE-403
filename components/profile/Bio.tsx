@@ -32,17 +32,19 @@ export default function Bio({ editing }: BioProps) {
             console.error("User ID is undefined. Cannot update profile.");
             return;
         }
-
-        const { data, error } = await supabase
+        try {
+            const { data } = await supabase
             .from('profiles')
             .update([
                 { bio },
             ])
             .eq('id', auth?.session?.user.id)
             .select();
+            console.log("Profile updated successfully:", data);
+        } catch (error) {
+            console.error("Error in Bio:", error);
+        }
 
-        if (error) console.error(error);
-        else console.log("Profile updated successfully:", data);
     };
 
     if (!editing) {
