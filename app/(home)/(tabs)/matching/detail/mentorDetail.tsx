@@ -4,7 +4,6 @@ import { useLocalSearchParams } from 'expo-router';
 
 export default function MentorDetailScreen() {
   const { username, full_name, avatar_url, bio } = useLocalSearchParams();
-  console.log(username)
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
