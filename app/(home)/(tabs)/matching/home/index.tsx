@@ -19,7 +19,7 @@ export default function MentorCommunityScreen({ route }) {
   useEffect(() => {
     const fetchMentors = async () => {
       try {
-        let { data: communityMentors } = await supabase
+        let { data: communityMentors} = await supabase
           .from('mentor_communities')
           .select('profiles (username, full_name, avatar_url, bio)')
           .eq('cid', cid)
