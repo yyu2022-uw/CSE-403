@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, ActivityIndicator } from 'react-native';
+import { Text, View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { supabase } from 'lib/supabase';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 
 export default function MatchingScreen() {
-  const param = useLocalSearchParams();
+  const { cid } = useLocalSearchParams();
   const [mentor, setMentor] = useState<{ username: string; full_name: string; avatar_url: string; bio: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -15,7 +15,7 @@ export default function MatchingScreen() {
         let { data: mentors } = await supabase
           .from('mentor_communities')
           .select('mid')
-          .eq('cid', param.cid);
+          .eq('cid', cid);
 
         if (mentors && mentors.length > 0) {
           // Select a random mentor ID
@@ -39,10 +39,10 @@ export default function MatchingScreen() {
       }
     };
 
-    if (param.cid) {
+    if (cid) {
       fetchMentors();
     }
-  }, [param.cid]);
+  }, [cid]);
 
   if (loading) {
     return (
@@ -55,7 +55,17 @@ export default function MatchingScreen() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {mentor ? (
-        <Text>Mentor Matched: {mentor.full_name}</Text>
+        <TouchableOpacity
+          onPress={() =>
+            router.push(
+              `/(home)/(tabs)/matching/detail/mentorDetail?username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
+            )
+          }
+        >
+          <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>
+            Mentor Matched: {mentor.full_name}
+          </Text>
+        </TouchableOpacity>
       ) : (
         <Text>No mentors available for this community.</Text>
       )}
