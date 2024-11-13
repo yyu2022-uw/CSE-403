@@ -3,10 +3,17 @@ import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "rea
 import { supabase } from "lib/supabase";
 import { useEffect, useState } from "react";
 
-export default function MentorCommunityScreen({ route } ) {
-  const {cid, name} = route.params;
+interface Profile {
+  username: string;
+  full_name: string;
+  avatar_url: string;
+  bio: string;
+}
+
+export default function MentorCommunityScreen({ route }) {
+  const { cid, name } = route.params;
   const router = useRouter();
-  const [mentors, setMentors] = useState<String[]>([]);
+  const [mentors, setMentors] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,16 +21,16 @@ export default function MentorCommunityScreen({ route } ) {
       try {
         let { data: communityMentors } = await supabase
           .from('mentor_communities')
-          .select('profiles (full_name)')
+          .select('profiles (username, full_name, avatar_url, bio)')
           .eq('cid', cid)
           .limit(3);
 
         if (communityMentors) {
-          const mentors = communityMentors.map((cm: any) => cm.profiles.full_name);
+          const mentors = communityMentors.flatMap((cm: { profiles: Profile[] }) => cm.profiles);
           setMentors(mentors);
         }
         setLoading(false);
-        
+
       } catch (error) {
         console.error('Failed to fetch community mentors:', error);
         setLoading(false);
@@ -53,13 +60,17 @@ export default function MentorCommunityScreen({ route } ) {
     <View style={styles.container}>
       <Text style={styles.title}>Recommended Mentors For The {name} Community</Text>
       {mentors.map((mentor, index) => (
-         <TouchableOpacity key={index} style={styles.card} onPress={() => router.push('/(home)/(tabs)/matching/detail/mentorDetail')}>
-          {/* <Image source={{ uri: mentor.profile_pic }} style={styles.profilePic} /> */}
-          <Text style={styles.mentorName}>{mentor}</Text>
+        <TouchableOpacity key={index} style={styles.card} onPress={() =>
+          router.push(
+            `/(home)/(tabs)/matching/detail/mentorDetail?username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
+          )}>
+          <Text style={styles.mentorName}>{mentor.full_name}</Text>
         </TouchableOpacity>
       ))}
-      
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/(home)/(tabs)/matching/detail/match')}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => { router.push(`/(home)/(tabs)/matching/detail/match?cid=${cid}`) }}
+      >
         <Text style={styles.buttonText}>Click To Be Matched With A Mentor</Text>
       </TouchableOpacity>
     </View>
