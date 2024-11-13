@@ -5,6 +5,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import MentorCommunityScreen from '.';
 import Auth from '@/components/login/Auth';
 import { useAuth } from '@useAuth';
+import { Redirect } from 'expo-router';
 
 const Drawer = createDrawerNavigator();
 
@@ -20,17 +21,14 @@ export default function DrawerNavigator() {
   useEffect(() => {
     const fetchCommunities = async () => {
       try {
-        let { data: userCommunities, error } = await supabase
+        let { data: userCommunities } = await supabase
           .from('user_communities')
           .select(`
             cid,
             communities (name)
           `)
-          .eq('uid', user);
+          .eq('uid', user.id);
 
-        if (error) {
-          throw error;
-        }
 
         if (userCommunities) {
           // Store both 'cid' and 'name' in the state
@@ -56,6 +54,10 @@ export default function DrawerNavigator() {
         <ActivityIndicator size="large" />
       </View>
     );
+  }
+
+  if (communities.length === 0) {
+    return <Redirect href={'/(home)/(tabs)/communities'} />;
   }
 
   return (
