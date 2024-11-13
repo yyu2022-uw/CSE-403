@@ -8,58 +8,57 @@ import { useAuth } from "./AuthProvider";
 //const client = StreamChat.getInstance('kcg53pa793bv');
 const client = StreamChat.getInstance(process.env.EXPO_PUBLIC_STREAM_API_KEY!);
 
+export default function ChatProvider({ children }: PropsWithChildren) {
+  const [isReady, setIsReady] = useState(false);
+  const profile = useAuth()?.profile;
 
-export default function ChatProvider ({children}: PropsWithChildren) {
-    const [isReady, setIsReady] = useState(false);
-    const profile = useAuth()?.profile;
+  useEffect(() => {
+    console.log(profile);
+    if (!profile) {
+      return;
+    }
 
-    useEffect(() => {
-      console.log(profile);
-        if (!profile) {
-            return;
-        }
+    console.log("From chatProvider: " + profile.id);
 
-        console.log("From chatProvider: " + profile.id);
+    const connect = async () => {
+      try {
+        await client.connectUser(
+          {
+            id: profile.id,
+            name: profile.full_name,
+            image: 'https://i.imgur.com/fR9Jz14.png',
+          },
+          client.devToken(profile.id),
+        );
+        setIsReady(true);
+      } catch (err) {
+        console.log(profile);
+        console.error(err);
+      }
+    };
 
-        const connect = async () => {
-          try {
-            await client.connectUser(
-              {
-                  id: profile.id,
-                  name: profile.full_name,
-                  image: 'https://i.imgur.com/fR9Jz14.png',
-              },
-              client.devToken(profile.id),
-            );
-            setIsReady(true);
-          } catch(err) {
-            console.log(profile);
-            console.error(err);
-          }
-        };
+    connect();
 
-        connect();
+    return () => {
+      if (isReady) {
+        client.disconnectUser();
+      }
+      setIsReady(false);
+    }
+  }, [profile?.id])
 
-        return () => {
-            if(isReady){
-                client.disconnectUser();
-            }
-            setIsReady(false);
-        }
-    }, [profile?.id])
-
-    if(!isReady) {
-      return (
+  if (!isReady) {
+    return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" />
       </View>
-      );
-    }
+    );
+  }
 
-    return (
-        <OverlayProvider>
-            <Chat client={client}>{children}</Chat>
-        </OverlayProvider>
+  return (
+    <OverlayProvider>
+      <Chat client={client}>{children}</Chat>
+    </OverlayProvider>
 
-    )
+  )
 }
