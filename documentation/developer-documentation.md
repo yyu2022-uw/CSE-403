@@ -73,10 +73,68 @@ To obtain the source code, you’ll need access to the project’s repository on
 ## How to Add New Tests
 
 1. Create a test file in the `__test__` folder and give it a descriptive name for the test suite.
+
+   - Follow the format of `function`_`description`.test.js
+
+   - e.g. interests_getUserInterests.test.js
+
 2. Import the component, mock necessary dependencies, and write test cases using Jest.
+
+3. Add detailed comment for what each test do.
 
 ---
 
 ## How to Build a Release of the Software
 
-1. We are not going to build a release for the project. However, in the real world, we can either build for Android or iOS and publish to the app store.
+### Current Scope
+
+At this stage, the project does not include building a release for publishing to app stores. However, the app should eventually be installable by users as an executable or package.
+
+### How to Build Locally
+
+1. **Ensure Prerequisites**:
+   - Install [Node.js](https://nodejs.org/) (LTS version recommended).
+
+   - Confirm that `npm` (Node Package Manager) is available by running:
+     ```bash
+     npm --version
+     ```
+
+   - Clone the project repository:
+     ```bash
+     git clone <repository_url>
+     cd <project_directory>
+     ```
+
+2. **Install Dependencies**:
+   - Run the following command to install all required dependencies:
+     ```bash
+     npm install
+     ```
+
+3. **Start the Application**:
+   - Use this command to start the application:
+     ```bash
+     npm start
+     ```
+
+   - This will launch the app and make it available locally (e.g., at `http://localhost:3000`).
+
+4. **Build for Distribution**:
+   - To create a production-ready build of the app, run:
+     ```bash
+     npm run build
+     ```
+
+   - The build artifacts will be placed in the `build` directory, ready for deployment.
+
+   - You will need a expo account for to log into ESA.
+
+   - After the build completes, you’ll get a link to download the built app.
+
+      - For Android: A .apk or .aab file (depending on your build configuration).
+
+      - For iOS: A .ipa file.
+
+
+
