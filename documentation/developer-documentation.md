@@ -136,5 +136,16 @@ At this stage, the project does not include building a release for publishing to
 
       - For iOS: A .ipa file.
 
+---
 
+## Common Errors
 
+### EMFILE: too many open files
+
+```
+Error: EMFILE: too many open files, watch
+    at FSEvent.FSWatcher._handle.onchange (node:internal/fs/watchers:207:21)
+```
+
+1. Delete the folder `node_modules`
+2. Run `npm install`
