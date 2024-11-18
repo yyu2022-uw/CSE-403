@@ -4,6 +4,7 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { AuthProvider } from "@useAuth";
 
 export default function TabNavigator() {
+    console.log('in tabs');
     return <AuthProvider>
           <Tabs>
             <Tabs.Screen

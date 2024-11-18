@@ -6,10 +6,10 @@ import { sizes } from '@Sizes';
 
 type InterestListProps = {
     interests: Interest[] | null | undefined
-    is_mentor: boolean;
+    onUpdate: () => void;
 }
 
-const InterestsList = ({ interests, is_mentor }: InterestListProps) => {
+const InterestsList = ({ interests, onUpdate }: InterestListProps) => {
     return (
         <View style={styles.container}>
             {/* {[
