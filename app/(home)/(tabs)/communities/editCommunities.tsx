@@ -12,77 +12,66 @@ interface UserInterest extends Interest {
 const EditCommunities: React.FC = () => {
     const auth = useAuth();
 
-    const [mentorInterests, setMentorInterests] = useState<Interest[] | null | undefined>(
-        auth?.mentorInterests
-    );
-
-    const [menteeInterests, setMenteeInterests] = useState<Interest[] | null | undefined>(
-        auth?.menteeInterests
-    );
-
+    const [mentorInterests, setMentorInterests] = useState<Interest[] | null | undefined>(auth?.mentorInterests);
+    const [menteeInterests, setMenteeInterests] = useState<Interest[] | null | undefined>(auth?.menteeInterests);
+    const [interestsDescription, setInterestsDescription] = useState<Interest[] | null | undefined>(auth?.interests);
     const [interests, setInterests] = useState<UserInterest[] | null | undefined>(null);
 
-    // Automatically fill interests when mentorInterests or menteeInterests change
     useEffect(() => {
-        const combinedInterests = [
-            ...(mentorInterests || []),
-            ...(menteeInterests || [])
-        ].map((interest) => ({
+        const combinedInterests = interestsDescription?.map((interest) => ({
             ...interest,
             is_mentor: mentorInterests?.some((mentor) => mentor.id === interest.id) || false,
-            joined: false,
+            joined: mentorInterests?.some((mentor) => mentor.id === interest.id) || menteeInterests?.some((mentee) => mentee.id === interest.id) || false,
         }));
 
         setInterests(combinedInterests);
+        console.log(interests);
     }, [mentorInterests, menteeInterests]);
 
-    // Update interests in database when any changes occur
-    useEffect(() => {
-        const updateUserInterests = async () => {
-            if (!auth?.session?.user?.id) {
-                console.error("User ID is undefined. Cannot update profile.");
-                return;
-            }
+    // Update interests in the database
+    async function updateUserInterests() {
+        if (!auth?.session?.user?.id) {
+            console.error("User ID is undefined. Cannot update profile.");
+            return;
+        }
 
-            // Delete existing records first
-            const { data: deletedData, error: deleteError } = await supabase
-                .from('user_interests')
-                .delete()
-                .eq('uid', auth?.user?.id);
-            if (deleteError) {
-                console.error("Failed to delete interest list:", deleteError);
-                return;
-            }
+        // Delete existing records first
+        const { data: deletedData, error: deleteError } = await supabase
+            .from('user_interests')
+            .delete()
+            .eq('uid', auth?.user?.id);
+        if (deleteError) {
+            console.error("Failed to delete interest list:", deleteError);
+            return;
+        }
 
-            // Filter interests that are joined
-            const filteredInterests = interests?.filter((interest) => interest.joined);
+        // Filter interests that are joined
+        const filteredInterests = interests?.filter((interest) => interest.joined);
 
-            if (filteredInterests?.length === 0) {
-                console.warn("No interests with 'joined' status set to true.");
-            }
+        if (filteredInterests?.length === 0) {
+            console.warn("No interests with 'joined' status set to true.");
+        }
 
-            // Insert new records
-            const { data: insertData, error: insertError } = await supabase
-                .from('user_interests')
-                .upsert(
-                    filteredInterests?.map((interest) => ({
-                        uid: auth?.user?.id,
-                        iid: interest.id,
-                        is_mentor: interest.is_mentor
-                    }))
-                )
-                .select();
+        // Insert new records
+        const { data: insertData, error: insertError } = await supabase
+            .from('user_interests')
+            .upsert(
+                filteredInterests?.map((interest) => ({
+                    uid: auth?.user?.id,
+                    iid: interest.id,
+                    is_mentor: interest.is_mentor
+                }))
+            )
+            .select();
 
-            if (insertError) {
-                console.error("Failed to insert updated interests:", insertError);
-            } else {
-                console.log("Profile updated successfully:", insertData);
-            }
-        };
+        if (insertError) {
+            console.error("Failed to insert updated interests:", insertError);
+        } else {
+            console.log("Profile updated successfully:", insertData);
+        }
+    }
 
-        updateUserInterests();
-    }, [interests, auth?.user?.id, mentorInterests, menteeInterests]);
-
+    // Handle status change for interests
     const handleStatusChange = (id: number, status: 'Mentor' | 'Mentee' | 'Not Joined') => {
         setInterests((prevInterests) =>
             prevInterests?.map((interest) =>
@@ -95,12 +84,15 @@ const EditCommunities: React.FC = () => {
                     : interest
             )
         );
+
+        // Update interests in the database after change
+        updateUserInterests();
     };
 
     const renderInterest = ({ item }: { item: UserInterest }) => {
         // Determine if the interest is marked as a mentor or mentee based on initial values
-        const isMentor = item.is_mentor; // Check if it's initially set as a mentor
-        const isMentee = item.joined && !isMentor; // Check if it's a mentee based on 'joined' and 'is_mentor'
+        const isMentor = item.is_mentor;
+        const isMentee = item.joined && !isMentor;
 
         return (
             <View style={[styles.interestContainer, { backgroundColor: item.color }]}>
@@ -141,7 +133,6 @@ const EditCommunities: React.FC = () => {
             </View>
         );
     };
-
 
     return (
         <View style={styles.container}>

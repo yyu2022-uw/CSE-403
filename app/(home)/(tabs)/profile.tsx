@@ -22,12 +22,14 @@ export default function Profile() {
     const [avatarUrl, setAvatarUrl] = useState('')
     const [website, setWebsite] = useState('')
     const [bio, setBio] = useState('')
+    const [mentorInterests, setMentorInterests] = useState(auth?.mentorInterests)
+    const [menteeInterests, setMenteeInterests] = useState(auth?.menteeInterests)
 
     useEffect(() => {
-        if (auth?.session?.user || auth?.profile) {
+        if (auth?.session?.user || auth?.profile || auth?.menteeInterests || auth?.mentorInterests) {
             getProfile();
         }
-    }, [auth?.profile, auth?.session]);
+    }, [auth?.profile, auth?.session, auth?.mentorInterests, auth?.menteeInterests]);
 
     async function getProfile() {
         try {
@@ -57,6 +59,10 @@ export default function Profile() {
         } finally {
             setLoading(false)
         }
+
+        setMentorInterests(auth?.mentorInterests);
+        setMenteeInterests(auth?.menteeInterests);
+        console.log(auth?.mentorInterests)
     }
 
     return (
@@ -77,13 +83,13 @@ export default function Profile() {
                             <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
                                 Mentoring
                             </Text>
-                            <InterestsList interests={auth?.mentorInterests} is_mentor={true} />
+                            <InterestsList interests={mentorInterests} is_mentor={true} />
                         </View>
                         <View>
                             <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
                                 Menteeing
                             </Text>
-                            <InterestsList interests={auth?.menteeInterests} is_mentor={false} />
+                            <InterestsList interests={menteeInterests} is_mentor={false} />
                         </View>
                     </View>
                     {editing ? (
