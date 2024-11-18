@@ -33,7 +33,7 @@ export default function Profile() {
 
     async function getProfile() {
         try {
-            console.log("getting new profile")
+            console.log("getting profile")
             setLoading(true)
             if (!auth?.session?.user) throw new Error('No user on the session!')
 

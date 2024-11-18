@@ -103,11 +103,9 @@ const EditCommunities: React.FC = () => {
                             key={status}
                             style={[
                                 styles.statusButton,
-                                // Apply highlight based on the current status
+                                // Apply highlight based on the current status, but exclude "Not Joined" or "X"
                                 (status === 'Mentor' && isMentor) ||
-                                    (status === 'Mentee' && isMentee) ||
-                                    (status === 'Not Joined' && !item.joined) ||
-                                    (status === 'Not Joined' && (item.is_mentor || item.joined))
+                                    (status === 'Mentee' && isMentee)
                                     ? styles.selectedButton
                                     : {},
                             ]}
@@ -118,8 +116,7 @@ const EditCommunities: React.FC = () => {
                                     styles.statusButtonText,
                                     // Change text color when selected
                                     (status === 'Mentor' && isMentor) ||
-                                        (status === 'Mentee' && isMentee) ||
-                                        (status === 'Not Joined' && !item.joined)
+                                        (status === 'Mentee' && isMentee)
                                         ? { color: '#fff' }
                                         : {},
                                 ]}
