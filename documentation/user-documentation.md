@@ -6,7 +6,7 @@ InterConnect is an application that runs on Android and iOS aiming at helping pe
 
 ## How to Install
 
-(Download on App Store)
+(Clone from git repository and download locally using `npm run build`)
 
 ## How to Run
 

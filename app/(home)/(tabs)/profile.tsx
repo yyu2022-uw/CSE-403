@@ -12,6 +12,7 @@ import { useAuth } from 'providers/AuthProvider';
 import { supabase } from 'lib/supabase';
 import Bio from '@/components/profile/Bio';
 import { Redirect } from 'expo-router';
+import { Interest } from '@/data/interests';
 
 export default function Profile() {
     const auth = useAuth();
@@ -22,14 +23,16 @@ export default function Profile() {
     const [avatarUrl, setAvatarUrl] = useState('')
     const [website, setWebsite] = useState('')
     const [bio, setBio] = useState('')
-    const [mentorInterests, setMentorInterests] = useState(auth?.mentorInterests)
-    const [menteeInterests, setMenteeInterests] = useState(auth?.menteeInterests)
+    const [mentorInterests, setMentorInterests] = useState<Interest[]>()
+    const [menteeInterests, setMenteeInterests] = useState<Interest[]>()
 
     useEffect(() => {
-        if (auth?.session?.user || auth?.profile || auth?.menteeInterests || auth?.mentorInterests) {
+        if (auth?.session?.user || auth?.profile) {
             getProfile();
+            fetchMentorInterests();
+            fetchMenteeInterests();
         }
-    }, [auth?.profile, auth?.session, auth?.mentorInterests, auth?.menteeInterests]);
+    }, [auth?.profile, auth?.session]);
 
     async function getProfile() {
         try {
@@ -60,9 +63,57 @@ export default function Profile() {
             setLoading(false)
         }
 
-        setMentorInterests(auth?.mentorInterests);
-        setMenteeInterests(auth?.menteeInterests);
-        console.log(auth?.mentorInterests)
+    }
+
+    const fetchMentorInterests = async () => {
+        let { data, error } = await supabase
+            .from('user_interests')
+            .select('interests(*)') // Get all fields from both user_interests and related interests
+            .eq('uid', auth?.user?.id)
+            .eq('is_mentor', true);
+
+        if (error) throw error;
+
+        if (data) {
+            console.log("data " + data);
+            // Transform the data to match the expected structure
+            const interests: Interest[] = data.map((item: any) => ({
+                id: item.interests.id,
+                name: item.interests.name,
+                color: item.interests.color,
+                icon: item.interests.icon,
+            }));
+
+            console.log("interests: " + interests);
+
+            setMentorInterests(interests);
+            console.log("mentor interests: " + mentorInterests);
+        }
+
+    }
+
+    const fetchMenteeInterests = async () => {
+        let { data, error } = await supabase
+            .from('user_interests')
+            .select('interests(*)') // Get all fields from both user_interests and related interests
+            .eq('uid', auth?.user?.id)
+            .eq('is_mentor', false);
+
+        if (error) throw error;
+
+        if (data) {
+            // Transform the data to match the expected structure
+            const interests: Interest[] = data.map((item: any) => ({
+                id: item.interests.id,
+                name: item.interests.name,
+                color: item.interests.color,
+                icon: item.interests.icon,
+            }));
+
+            setMenteeInterests(interests);
+            console.log("mentee interests: " + menteeInterests);
+        }
+
     }
 
     return (
@@ -83,13 +134,13 @@ export default function Profile() {
                             <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
                                 Mentoring
                             </Text>
-                            <InterestsList interests={mentorInterests} is_mentor={true} />
+                            <InterestsList interests={mentorInterests} onUpdate={fetchMentorInterests} />
                         </View>
                         <View>
                             <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
                                 Menteeing
                             </Text>
-                            <InterestsList interests={menteeInterests} is_mentor={false} />
+                            <InterestsList interests={menteeInterests} onUpdate={fetchMenteeInterests} />
                         </View>
                     </View>
                     {editing ? (
