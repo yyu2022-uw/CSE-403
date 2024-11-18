@@ -12,14 +12,6 @@ interface UserInterest extends Interest {
 const EditCommunities: React.FC = () => {
     const auth = useAuth();
 
-    const [interests, setInterests] = useState<UserInterest[] | null | undefined>(
-        auth?.interests?.map((interest) => ({
-            ...interest,
-            is_mentor: false,
-            joined: false,
-        }))
-    );
-
     const [mentorInterests, setMentorInterests] = useState<Interest[] | null | undefined>(
         auth?.mentorInterests
     );
@@ -28,34 +20,68 @@ const EditCommunities: React.FC = () => {
         auth?.menteeInterests
     );
 
-    // Update interests in database
+    const [interests, setInterests] = useState<UserInterest[] | null | undefined>(null);
+
+    // Automatically fill interests when mentorInterests or menteeInterests change
     useEffect(() => {
-        const updateUserInterests = async ({
-            interests
-        }: {
-            interests: UserInterest[] | null | undefined;
-        }) => {
+        const combinedInterests = [
+            ...(mentorInterests || []),
+            ...(menteeInterests || [])
+        ].map((interest) => ({
+            ...interest,
+            is_mentor: mentorInterests?.some((mentor) => mentor.id === interest.id) || false,
+            joined: false,
+        }));
+
+        setInterests(combinedInterests);
+    }, [mentorInterests, menteeInterests]);
+
+    // Update interests in database when any changes occur
+    useEffect(() => {
+        const updateUserInterests = async () => {
             if (!auth?.session?.user?.id) {
                 console.error("User ID is undefined. Cannot update profile.");
                 return;
             }
 
-            const { data, error } = await supabase
+            // Delete existing records first
+            const { data: deletedData, error: deleteError } = await supabase
                 .from('user_interests')
-                .insert(
-                    interests?.map((interest) => ({
+                .delete()
+                .eq('uid', auth?.user?.id);
+            if (deleteError) {
+                console.error("Failed to delete interest list:", deleteError);
+                return;
+            }
+
+            // Filter interests that are joined
+            const filteredInterests = interests?.filter((interest) => interest.joined);
+
+            if (filteredInterests?.length === 0) {
+                console.warn("No interests with 'joined' status set to true.");
+            }
+
+            // Insert new records
+            const { data: insertData, error: insertError } = await supabase
+                .from('user_interests')
+                .upsert(
+                    filteredInterests?.map((interest) => ({
                         uid: auth?.user?.id,
                         iid: interest.id,
+                        is_mentor: interest.is_mentor
                     }))
                 )
                 .select();
 
-            if (error) console.error(error);
-            else console.log("Profile updated successfully:", data);
+            if (insertError) {
+                console.error("Failed to insert updated interests:", insertError);
+            } else {
+                console.log("Profile updated successfully:", insertData);
+            }
         };
 
-        updateUserInterests({ interests });
-    }, [interests]); // Only runs when `interests` change
+        updateUserInterests();
+    }, [interests, auth?.user?.id, mentorInterests, menteeInterests]);
 
     const handleStatusChange = (id: number, status: 'Mentor' | 'Mentee' | 'Not Joined') => {
         setInterests((prevInterests) =>
@@ -71,38 +97,51 @@ const EditCommunities: React.FC = () => {
         );
     };
 
-    const renderInterest = ({ item }: { item: UserInterest }) => (
-        <View style={[styles.interestContainer, { backgroundColor: item.color }]}>
-            <Text style={styles.interestText}>{item.icon} {item.name}</Text>
-            <View style={styles.statusButtons}>
-                {['Mentor', 'Mentee', 'Not Joined'].map((status) => (
-                    <TouchableOpacity
-                        key={status}
-                        style={[
-                            styles.statusButton,
-                            (item.is_mentor && status === 'Mentor') ||
-                                (!item.is_mentor && item.joined && status === 'Mentee')
-                                ? styles.selectedButton
-                                : {},
-                        ]}
-                        onPress={() => handleStatusChange(item.id, status as 'Mentor' | 'Mentee' | 'Not Joined')}
-                    >
-                        <Text
+    const renderInterest = ({ item }: { item: UserInterest }) => {
+        // Determine if the interest is marked as a mentor or mentee based on initial values
+        const isMentor = item.is_mentor; // Check if it's initially set as a mentor
+        const isMentee = item.joined && !isMentor; // Check if it's a mentee based on 'joined' and 'is_mentor'
+
+        return (
+            <View style={[styles.interestContainer, { backgroundColor: item.color }]}>
+                <Text style={styles.interestText}>{item.icon} {item.name}</Text>
+                <View style={styles.statusButtons}>
+                    {['Mentor', 'Mentee', 'Not Joined'].map((status) => (
+                        <TouchableOpacity
+                            key={status}
                             style={[
-                                styles.statusButtonText,
-                                (item.is_mentor && status === 'Mentor') ||
-                                    (!item.is_mentor && item.joined && status === 'Mentee')
-                                    ? { color: '#fff' }
+                                styles.statusButton,
+                                // Apply highlight based on the current status
+                                (status === 'Mentor' && isMentor) ||
+                                    (status === 'Mentee' && isMentee) ||
+                                    (status === 'Not Joined' && !item.joined) ||
+                                    (status === 'Not Joined' && (item.is_mentor || item.joined))
+                                    ? styles.selectedButton
                                     : {},
                             ]}
+                            onPress={() => handleStatusChange(item.id, status as 'Mentor' | 'Mentee' | 'Not Joined')}
                         >
-                            {status === 'Not Joined' && (item.is_mentor || item.joined) ? 'X' : status}
-                        </Text>
-                    </TouchableOpacity>
-                ))}
+                            <Text
+                                style={[
+                                    styles.statusButtonText,
+                                    // Change text color when selected
+                                    (status === 'Mentor' && isMentor) ||
+                                        (status === 'Mentee' && isMentee) ||
+                                        (status === 'Not Joined' && !item.joined)
+                                        ? { color: '#fff' }
+                                        : {},
+                                ]}
+                            >
+                                {/* Display 'X' instead of 'Not Joined' when the user is joined */}
+                                {status === 'Not Joined' && (item.is_mentor || item.joined) ? 'X' : status}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
             </View>
-        </View>
-    );
+        );
+    };
+
 
     return (
         <View style={styles.container}>

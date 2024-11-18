@@ -24,11 +24,14 @@ export default function Profile() {
     const [bio, setBio] = useState('')
 
     useEffect(() => {
-        if (auth?.session) getProfile()
-    }, [auth?.session])
+        if (auth?.session?.user || auth?.profile) {
+            getProfile();
+        }
+    }, [auth?.profile, auth?.session]);
 
     async function getProfile() {
         try {
+            console.log("getting new profile")
             setLoading(true)
             if (!auth?.session?.user) throw new Error('No user on the session!')
 
