@@ -13,6 +13,7 @@ Welcome to the README.md file for **InterConnect**. This document provides an ov
 - [Documentation](#documentation)
 
 ---
+
 ## Overview
 This project is a Model-View-View mobile application designed to connect mentors with mentees. It consists of the following major components:
 
@@ -23,6 +24,8 @@ This project is a Model-View-View mobile application designed to connect mentors
 **Action**: Manipulate information on screen or interact with backend data.
 
 **State**: Manages the application's current data, such as active page and variable values.
+
+---
 
 ## Operational Use Cases
 1. User Login and Profile Retrieval
@@ -65,6 +68,8 @@ This project is a Model-View-View mobile application designed to connect mentors
 
 6. Follow the instructions in the terminal to preview the app in Expo Go
 
+---
+
 ## Connecting to the backend
 
 To connect to our database (Supabase) and chat interface (Stream), you will need to create a .env file in the top-level directory with the following content:
@@ -77,6 +82,8 @@ EXPO_PUBLIC_STREAM_API_KEY=kcg53pa793bv
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
+---
+
 ## Testing
 
 1. Test the app using the following command
@@ -84,6 +91,8 @@ You can start developing by editing the files inside the **app** directory. This
    ```bash
    npm test
    ```
+
+---
 
 ## Documentation
 
