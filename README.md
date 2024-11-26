@@ -72,15 +72,7 @@ This project is a Model-View-View mobile application designed to connect mentors
 
 ## Connecting to the backend
 
-To connect to our database (Supabase) and chat interface (Stream), you will need to create a .env file in the top-level directory with the following content:
-
-```bash
-EXPO_PUBLIC_SUPABASE_URL = https://hvuqzviniaxmecwzniuu.supabase.co
-EXPO_PUBLIC_SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2dXF6dmluaWF4bWVjd3puaXV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjg0MjA3NTQsImV4cCI6MjA0Mzk5Njc1NH0.8FRDPREM1CzaukaCHnQQr-D6_BLtMwKi0HKhphM0x7w
-EXPO_PUBLIC_STREAM_API_KEY=kcg53pa793bv
-```
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+To connect to our database (Supabase) and chat interface (Stream), you will need to create a .env file in the top-level directory. Contact us on Discord for the content of the file at **planetquack**.
 
 ---
 
