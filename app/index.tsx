@@ -4,6 +4,7 @@ import { useAuth } from 'providers/AuthProvider';
 import Auth from '../components/login/Auth';
 import React from 'react';
 import { ActivityIndicator } from 'react-native';
+import { Redirect } from 'expo-router';
 
 import HomeScreen from './(home)';
 

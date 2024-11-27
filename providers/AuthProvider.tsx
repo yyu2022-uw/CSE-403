@@ -9,6 +9,7 @@ interface AuthContextType {
   profile: any | null;
   mentorInterests: Interest[] | null | undefined;
   menteeInterests: Interest[] | null | undefined;
+  interests: Interest[] | null | undefined;
   loading: boolean;
 }
 
@@ -17,12 +18,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<any | null>();
+  const [interests, setInterests] = useState<Interest[] | null>(); // TODO: move this into a non-auth provider?
   const [mentorInterests, setMentorInterests] = useState<Interest[] | null>();
   const [menteeInterests, setMenteeInterests] = useState<Interest[] | null>();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchSession = async () => {
+      console.log("fetching session")
       try {
         // await supabase.auth.signOut(); // Uncomment this whenever you want to end the session (log the user out)
         const { data: { session } } = await supabase.auth.getSession();
@@ -49,6 +52,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     try {
+
+      // console.log(session.user.id);
+
       const fetchProfile = async () => {
         try {
           let { data } = await supabase
@@ -72,6 +78,43 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setLoading(false);
     }
 
+  }, [session?.user]);
+
+  useEffect(() => {
+    const fetchInterests = async () => {
+      if (!session?.user) {
+        setInterests([]);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('interests')
+          .select('*');
+        if (error) throw error;
+
+        if (data) {
+          // Transform the data to match the expected structure
+          const interests: Interest[] = data.map((item: any) => ({
+            id: item.id,
+            name: item.name,
+            color: item.color,
+            icon: item.icon,
+          }));
+
+          console.log("Fetched interests:", data);
+          setInterests(interests);
+          console.log("Transformed interests:", interests);
+        }
+      } catch (err) {
+        console.error("Error fetching interests:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInterests();
   }, [session?.user]);
 
   useEffect(() => {
@@ -103,6 +146,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }));
 
             setMentorInterests(interests);
+            console.log(interests);
           }
         } catch (err) {
           console.log("mentor interests: " + mentorInterests);
@@ -150,6 +194,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }));
 
             setMenteeInterests(interests);
+            console.log("mentee interests: " + menteeInterests);
           }
         } catch (err) {
           console.log(menteeInterests);
@@ -170,7 +215,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   return (
     // Added an exclamation here
-    <AuthContext.Provider value={{ session, user: session?.user!, profile, mentorInterests, menteeInterests, loading }}>
+    <AuthContext.Provider value={{ session, user: session?.user!, profile, mentorInterests, menteeInterests, interests, loading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -5,7 +5,7 @@ import { AuthProvider } from "@useAuth";
 
 export default function TabNavigator() {
     return <AuthProvider>
-          <Tabs>
+        <Tabs>
             <Tabs.Screen
                 name="communities"
                 options={{
@@ -32,9 +32,9 @@ export default function TabNavigator() {
                 name="profile"
                 options={{
                     title: 'Profile',
-                    tabBarIcon: ({ size, color }) => <FontAwesome6 name="circle-user" size={size} color={color}/>
+                    tabBarIcon: ({ size, color }) => <FontAwesome6 name="circle-user" size={size} color={color} />
                 }}
             />
         </Tabs>
-      </AuthProvider>
+    </AuthProvider>
 }

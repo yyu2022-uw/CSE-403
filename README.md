@@ -1,4 +1,4 @@
-# README - InterConnect
+# Welcome to InterConnect 👋
 
 Welcome to the README.md file for **InterConnect**. This document provides an overview of the app and how to run and test the app.
 
@@ -66,6 +66,12 @@ This project is a Model-View-View mobile application designed to connect mentors
     npm start
    ```
 
+3. Test the app
+
+   ```bash
+    npm test
+   ```
+
 6. Follow the instructions in the terminal to preview the app in Expo Go
 
 ---
@@ -78,14 +84,10 @@ To connect to our database (Supabase) and chat interface (Stream), you will need
 
 ## Testing
 
-1. Test the app using the following command
+## Project Specifics
 
-   ```bash
-   npm test
-   ```
+To log out a user,
 
----
-
-## Documentation
-
-Navigate to the Wiki tab in GitHub to view developer documentation and user documentation: https://github.com/yyu2022-uw/CSE-403/wiki
+1. Uncomment the line in ```providers/AuthProvider.tsx```
+2. Type ```r``` in the terminal to reset the app
+3. Comment out the same line
