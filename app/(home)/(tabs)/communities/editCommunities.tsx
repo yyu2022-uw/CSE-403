@@ -98,18 +98,18 @@ const EditCommunities: React.FC = () => {
             <View style={[styles.interestContainer, { backgroundColor: item.color }]}>
                 <Text style={styles.interestText}>{item.icon} {item.name}</Text>
                 <View style={styles.statusButtons}>
-                    {['Mentor', 'Mentee', 'Not Joined'].map((status) => (
+                    {['Mentor', 'Mentee'].map((status) => (
                         <TouchableOpacity
                             key={status}
                             style={[
                                 styles.statusButton,
-                                // Apply highlight based on the current status, but exclude "Not Joined" or "X"
+                                // Apply highlight based on the current status
                                 (status === 'Mentor' && isMentor) ||
                                     (status === 'Mentee' && isMentee)
                                     ? styles.selectedButton
                                     : {},
                             ]}
-                            onPress={() => handleStatusChange(item.id, status as 'Mentor' | 'Mentee' | 'Not Joined')}
+                            onPress={() => handleStatusChange(item.id, status as 'Mentor' | 'Mentee')}
                         >
                             <Text
                                 style={[
@@ -121,11 +121,27 @@ const EditCommunities: React.FC = () => {
                                         : {},
                                 ]}
                             >
-                                {/* Display 'X' instead of 'Not Joined' when the user is joined */}
-                                {status === 'Not Joined' && (item.is_mentor || item.joined) ? 'X' : status}
+                                {status}
                             </Text>
                         </TouchableOpacity>
                     ))}
+                    <TouchableOpacity
+                        key="Not Joined"
+                        style={[
+                            styles.statusButton,
+                            !item.joined ? styles.selectedButton : {},
+                        ]}
+                        onPress={() => handleStatusChange(item.id, 'Not Joined')}
+                    >
+                        <Text
+                            style={[
+                                styles.statusButtonText,
+                                !item.joined ? { color: '#fff' } : {},
+                            ]}
+                        >
+                            X
+                        </Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         );
