@@ -13,6 +13,8 @@ import { supabase } from 'lib/supabase';
 import Bio from '@/components/profile/Bio';
 import { Redirect } from 'expo-router';
 import { Interest } from '@/data/interests';
+import AppScreen from 'app';
+import Auth from '@/components/login/Auth';
 
 export default function Profile() {
     const auth = useAuth();
@@ -25,6 +27,7 @@ export default function Profile() {
     const [bio, setBio] = useState('')
     const [mentorInterests, setMentorInterests] = useState<Interest[]>()
     const [menteeInterests, setMenteeInterests] = useState<Interest[]>()
+    const [loggedOut, setLoggedOut]  = useState(false)
 
     useEffect(() => {
         if (auth?.session?.user || auth?.profile) {
@@ -38,7 +41,9 @@ export default function Profile() {
         try {
             console.log("getting profile")
             setLoading(true)
-            if (!auth?.session?.user) throw new Error('No user on the session!')
+            if (!auth?.session?.user) {
+                // do something to log out
+            }
 
             const { data, error, status } = await supabase
                 .from('profiles')
@@ -114,6 +119,10 @@ export default function Profile() {
             console.log("mentee interests: " + menteeInterests);
         }
 
+    }
+
+    if (loggedOut) {
+        return <AppScreen/>
     }
 
     return (

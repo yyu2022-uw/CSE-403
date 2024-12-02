@@ -3,15 +3,21 @@ import { ActivityIndicator, View } from "react-native";
 import { StreamChat } from 'stream-chat';
 import { Chat, OverlayProvider } from 'stream-chat-expo';
 import { useAuth } from "./AuthProvider";
+import AppScreen from "app";
 
 // This constant needs to be replaced with the environment variable, but for some reason I'm having issues here.
 const client = StreamChat.getInstance(process.env.EXPO_PUBLIC_STREAM_API_KEY!);
 
 export default function ChatProvider({ children }: PropsWithChildren) {
   const [isReady, setIsReady] = useState(false);
+  const [loggedOut, setLoggedOut] = useState(false);
   const profile = useAuth()?.profile;
 
   useEffect(() => {
+    if (!useAuth()?.session?.user) {
+      // do something to log out
+    }
+
     console.log(profile);
     if (!profile) {
       return;

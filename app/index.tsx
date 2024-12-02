@@ -4,11 +4,10 @@ import { useAuth } from 'providers/AuthProvider';
 import Auth from '../components/login/Auth';
 import React from 'react';
 import { ActivityIndicator } from 'react-native';
-import { Redirect } from 'expo-router';
-
 import HomeScreen from './(home)';
 
 export default function AppScreen() {
+    console.log("in app screen");
     const auth = useAuth();
 
     if (auth?.loading) {
@@ -20,8 +19,6 @@ export default function AppScreen() {
     }
 
     if (auth?.session && auth?.user) {
-        // Redirect to home page
-        // return <Redirect href={'/(home)'} />;
         return <HomeScreen />
     } else {
         return <Auth />;
