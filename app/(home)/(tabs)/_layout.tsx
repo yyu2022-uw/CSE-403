@@ -6,6 +6,7 @@ import { AuthProvider } from "@useAuth";
 import { supabase } from "lib/supabase";
 import AppScreen from "app";
 import { useState } from "react";
+import { StyleSheet } from "react-native";
 
 
 export default function TabNavigator() {
@@ -39,7 +40,7 @@ export default function TabNavigator() {
                 options={{
                     title: 'Profile',
                     tabBarIcon: ({ size, color }) => <FontAwesome6 name="circle-user" size={size} color={color}/>,
-                    headerRight: () => <AntDesign name="logout" size={24} color="black" onPress={() => supabase.auth.signOut()}/>
+                    headerRight: () => <AntDesign name="logout" size={22} color="black" onPress={() => supabase.auth.signOut()}   style={{ marginRight: 25 }}/>
                     }
                 }
             />

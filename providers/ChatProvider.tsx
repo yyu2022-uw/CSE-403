@@ -3,7 +3,8 @@ import { ActivityIndicator, View } from "react-native";
 import { StreamChat } from 'stream-chat';
 import { Chat, OverlayProvider } from 'stream-chat-expo';
 import { useAuth } from "./AuthProvider";
-import AppScreen from "app";
+import { Redirect } from "expo-router";
+import Auth from "@/components/login/Auth";
 
 // This constant needs to be replaced with the environment variable, but for some reason I'm having issues here.
 const client = StreamChat.getInstance(process.env.EXPO_PUBLIC_STREAM_API_KEY!);
@@ -12,10 +13,13 @@ export default function ChatProvider({ children }: PropsWithChildren) {
   const [isReady, setIsReady] = useState(false);
   const [loggedOut, setLoggedOut] = useState(false);
   const profile = useAuth()?.profile;
+  const user = useAuth()?.session?.user;
+
 
   useEffect(() => {
-    if (!useAuth()?.session?.user) {
-      // do something to log out
+    if (!user) {
+      console.log("signed out");
+      setLoggedOut(true);
     }
 
     console.log(profile);
@@ -52,6 +56,10 @@ export default function ChatProvider({ children }: PropsWithChildren) {
     }
   }, [profile?.id])
 
+  if (loggedOut) {
+    // do something
+  }
+
   if (!isReady) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -59,6 +67,8 @@ export default function ChatProvider({ children }: PropsWithChildren) {
       </View>
     );
   }
+
+
 
   return (
     <OverlayProvider>
