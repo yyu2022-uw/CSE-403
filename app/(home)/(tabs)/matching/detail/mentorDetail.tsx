@@ -4,13 +4,23 @@ import { useLocalSearchParams } from 'expo-router';
 
 export default function MentorDetailScreen() {
   const { username, full_name, avatar_url, bio } = useLocalSearchParams();
+  const validAvatarUrl = Array.isArray(avatar_url) ? avatar_url[0] : avatar_url;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.profileContainer}>
-        {/* {avatar_url && (
-          <Image source={{ uri: avatar_url }} style={styles.avatar} />
-        )} */}
+        <View>
+          {validAvatarUrl !== 'null' ? (
+            <Image
+              source={{ uri: validAvatarUrl }}
+              accessibilityLabel="Avatar"
+              style={[ styles.avatar, styles.image]}
+            />
+          ) : (
+            <View style={[ styles.avatar, styles.noImage]} />
+          )}
+        </View>
+
         <Text style={styles.fullName}>{full_name}</Text>
         <Text style={styles.username}>@{username}</Text>
       </View>
@@ -68,5 +78,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#555',
     lineHeight: 24,
+  },
+  image: {
+    objectFit: 'cover',
+    paddingTop: 0,
+  },
+  noImage: {
+    backgroundColor: '#333',
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: 'rgb(200, 200, 200)',
+    borderRadius: 5,
   },
 });
