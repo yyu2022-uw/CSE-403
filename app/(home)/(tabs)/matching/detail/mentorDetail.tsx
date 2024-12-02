@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, Button } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 
 export default function MentorDetailScreen() {
@@ -28,6 +28,11 @@ export default function MentorDetailScreen() {
         <Text style={styles.heading}>Bio</Text>
         <Text style={styles.bioText}>{bio}</Text>
       </View>
+      <Button
+        title="Connect with Mentor"
+        // onPress={handleConnectPress}
+        color="#007BFF"
+      />
     </ScrollView>
   );
 }
