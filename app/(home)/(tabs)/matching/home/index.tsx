@@ -11,7 +11,7 @@ interface Profile {
 }
 
 export default function MentorCommunityScreen({ route }) {
-  const { cid, name } = route.params;
+  const { iid, name } = route.params;
   const router = useRouter();
   const [mentors, setMentors] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,9 +20,10 @@ export default function MentorCommunityScreen({ route }) {
     const fetchMentors = async () => {
       try {
         let { data: communityMentors } = await supabase
-          .from('mentor_communities')
+          .from('user_interests')
           .select('profiles (username, full_name, avatar_url, bio)')
-          .eq('cid', cid)
+          .eq('iid', iid)
+          .eq('is_mentor', true)
           .limit(3);
 
         if (communityMentors) {
@@ -38,7 +39,7 @@ export default function MentorCommunityScreen({ route }) {
     };
 
     fetchMentors();
-  }, [cid]);
+  }, [iid]);
 
   if (loading) {
     return (
@@ -69,7 +70,7 @@ export default function MentorCommunityScreen({ route }) {
       ))}
       <TouchableOpacity
         style={styles.button}
-        onPress={() => { router.push(`/(home)/(tabs)/matching/detail/match?cid=${cid}`) }}
+        onPress={() => { router.push(`/(home)/(tabs)/matching/detail/match?iid=${iid}`) }}
       >
         <Text style={styles.buttonText}>Click To Be Matched With A Mentor</Text>
       </TouchableOpacity>

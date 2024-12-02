@@ -10,7 +10,7 @@ import { Redirect } from 'expo-router';
 const Drawer = createDrawerNavigator();
 
 export default function DrawerNavigator() {
-  const [communities, setCommunities] = useState<{ cid: string; name: string }[]>([]);
+  const [communities, setCommunities] = useState<{ iid: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const user = useAuth()?.user;
 
@@ -22,19 +22,19 @@ export default function DrawerNavigator() {
     const fetchCommunities = async () => {
       try {
         let { data: userCommunities } = await supabase
-          .from('user_communities')
+          .from('user_interests')
           .select(`
-            cid,
-            communities (name)
+            iid,
+            interests (name)
           `)
-          .eq('uid', user.id);
-
+          .eq('uid', user.id)
+          .eq('is_mentor', false);
 
         if (userCommunities) {
-          // Store both 'cid' and 'name' in the state
+          // Store both 'iid' and 'name' in the state
           const community = userCommunities.map((uc: any) => ({
-            cid: uc.cid,
-            name: uc.communities.name,
+            iid: uc.iid,
+            name: uc.interests.name,
           }));
           setCommunities(community);
         }
@@ -67,7 +67,7 @@ export default function DrawerNavigator() {
           key={index}
           name={community.name}
           component={MentorCommunityScreen}
-          initialParams={{ cid: community.cid, name: community.name }}
+          initialParams={{ iid: community.iid, name: community.name }}
           options={{
             drawerLabel: community.name,
             title: "Matching",
