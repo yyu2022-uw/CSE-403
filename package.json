@@ -24,6 +24,7 @@
     "@stream-io/flat-list-mvcp": "^0.10.3",
     "@supabase/auth-js": "^2.65.0",
     "@supabase/supabase-js": "^2.45.6",
+    "eas": "^0.1.0",
     "expo": "^51.0.39",
     "expo-av": "^14.0.7",
     "expo-clipboard": "~6.0.3",
