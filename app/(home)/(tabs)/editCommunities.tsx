@@ -9,7 +9,7 @@ interface UserInterest extends Interest {
     joined: boolean;
 }
 
-const EditCommunities: React.FC = () => {
+export default function EditCommunities() {
     const auth = useAuth();
 
     const [mentorInterests, setMentorInterests] = useState<Interest[] | null | undefined>(auth?.mentorInterests);
@@ -157,8 +157,6 @@ const EditCommunities: React.FC = () => {
         </View>
     );
 };
-
-export default EditCommunities;
 
 const styles = StyleSheet.create({
     container: {

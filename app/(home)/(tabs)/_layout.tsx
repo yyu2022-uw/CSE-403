@@ -7,7 +7,7 @@ export default function TabNavigator() {
     return <AuthProvider>
         <Tabs>
             <Tabs.Screen
-                name="communities"
+                name="editCommunities"
                 options={{
                     title: 'Communities',
                     tabBarIcon: ({ size, color }) => <FontAwesome5 name="home" size={size} color={color} />
