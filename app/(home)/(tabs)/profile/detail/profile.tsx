@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, Button, ActivityIndicator } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, Button, ActivityIndicator, SafeAreaView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Interest } from '@/data/interests';
 import { supabase } from 'lib/supabase';
@@ -7,10 +7,15 @@ import InterestsList from '@/components/profile/InterestsList';
 import { sizes } from '@Sizes';
 import { spacing } from '@Spacing';
 import Divider from '@/components/Divider';
+import ProfileTag from '@/components/profile/ProfileTag';
+import Bio from '@/components/profile/Bio';
+import FindNewInterestMessage from '@/components/profile/FindNewInterestMessage';
+import EditProfileButton from '@/components/profile/EditProfileButton';
 
 export default function ProfileScreen() {
     const { id, username, full_name, avatar_url, bio } = useLocalSearchParams();
     const validAvatarUrl = Array.isArray(avatar_url) ? avatar_url[0] : avatar_url;
+    const [editing, setEditing] = useState(false);
     const [mentorInterests, setMentorInterests] = useState<Interest[]>();
     const [menteeInterests, setMenteeInterests] = useState<Interest[]>();
     const [loading, setLoading] = useState(true);
@@ -71,26 +76,17 @@ export default function ProfileScreen() {
     }, [id]);
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <View style={styles.profileContainer}>
-                <View>
-                    {validAvatarUrl !== 'null' ? (
-                        <Image
-                            source={{ uri: validAvatarUrl }}
-                            accessibilityLabel="Avatar"
-                            style={[styles.avatar, styles.image]}
-                        />
-                    ) : (
-                        <View style={[styles.avatar, styles.noImage]} />
-                    )}
-                </View>
 
-                <Text style={styles.fullName}>{full_name}</Text>
-                <Text style={styles.username}>@{username}</Text>
-            </View>
-            <View style={styles.detailsContainer}>
-                <Text style={[sizes.subtitle, styles.bio]}>Bio</Text>
-                <Text style={styles.bioText}>{bio}</Text>
+        <SafeAreaView style={styles.container}>
+            {/* <SafeAreaView> */}
+            <ScrollView>
+                <ProfileTag
+                    editing={editing}
+                />
+                <Text style={[sizes.subtitle, styles.subtitle]}>
+                    Bio
+                </Text>
+                <Bio editing={editing} />
                 <Divider margin={spacing} />
                 <View style={styles.interests}>
                     <View style={styles.interestsLists}>
@@ -117,83 +113,39 @@ export default function ProfileScreen() {
                             }
                         </View>
                     </View>
+                    {editing ? (
+                        <View style={styles.newInterestMessage}>
+                            <FindNewInterestMessage />
+                        </View>
+                    ) : null}
                 </View>
-            </View>
-        </ScrollView>
+                <Divider margin={spacing} />
+                <View style={styles.userId}>
+                    <Text>User ID: {id}</Text>
+                </View>
+            </ScrollView>
+            <EditProfileButton
+                editing={editing}
+                setEditing={setEditing}
+                // onUpdate={() => updateProfile({ username, fullName, website, bio, avatarUrl })}
+                onUpdate={() => { }} // Update profile on button press (not currently using this, each component updates separately)
+            />
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
-        padding: 16,
-        backgroundColor: '#f8f9fa',
-    },
-    centered: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        display: 'flex',
+        backgroundColor: 'white',
     },
-    profileContainer: {
-        alignItems: 'center',
-        marginBottom: 24,
-    },
-    avatar: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
-        marginBottom: 16,
-    },
-    fullName: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#333',
-    },
-    username: {
-        fontSize: 16,
-        color: '#555',
-        marginBottom: 8,
-    },
-    detailsContainer: {
-        backgroundColor: '#fff',
-        borderRadius: 8,
-        padding: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 3,
-    },
-    heading: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 8,
-    },
-    bioText: {
-        fontSize: 16,
-        color: '#555',
-        lineHeight: 24,
-        paddingLeft: spacing / 4
-    },
-    image: {
-        objectFit: 'cover',
-        paddingTop: 0,
-    },
-    noImage: {
-        backgroundColor: '#333',
-        borderWidth: 1,
-        borderStyle: 'solid',
-        borderColor: 'rgb(200, 200, 200)',
-        borderRadius: 5,
-    },
-    mentorMentee: {
-        paddingBottom: 8
+    subtitle: {
+        paddingLeft: spacing
     },
     interests: {
         margin: 'auto',
         alignItems: 'center',
-        paddingBottom: spacing
     },
     interestsLists: {
         width: 350,
@@ -203,7 +155,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
-    bio: {
-        paddingLeft: spacing / 4
+    mentorMentee: {
+        paddingBottom: 8
     },
-});
+    newInterestMessage: {
+        paddingTop: 8
+    },
+    userId: {
+        alignItems: 'center',
+    }
+})
