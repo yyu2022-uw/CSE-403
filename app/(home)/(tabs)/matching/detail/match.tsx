@@ -60,7 +60,7 @@ export default function MatchingScreen() {
         <TouchableOpacity
           onPress={() =>
             router.push(
-              `/(home)/(tabs)/matching/detail/mentorDetail?username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
+              `/(home)/(tabs)/matching/detail/mentorDetail?id=${mentor.id}&username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
             )
           }
         >

@@ -107,7 +107,7 @@ export default function MentorDetailScreen() {
         <Text style={styles.username}>@{username}</Text>
       </View>
       <View style={styles.detailsContainer}>
-        <Text style={styles.heading}>Bio</Text>
+        <Text style={[sizes.subtitle, styles.bio]}>Bio</Text>
         <Text style={styles.bioText}>{bio}</Text>
         <Divider margin={spacing} />
         <View style={styles.interests}>
@@ -188,6 +188,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#555',
     lineHeight: 24,
+    paddingLeft: spacing / 4
   },
   image: {
     objectFit: 'cover',
@@ -215,5 +216,8 @@ const styles = StyleSheet.create({
     margin: 'auto',
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  bio: {
+    paddingLeft: spacing / 4
   },
 });
