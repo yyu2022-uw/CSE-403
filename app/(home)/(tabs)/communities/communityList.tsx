@@ -12,8 +12,8 @@ function CommunitiesScreen() {
     const auth = useAuth();
 
     // Check if mentorInterests exists and has content
-    if (!auth?.mentorInterests || auth.mentorInterests.length === 0 ||
-        !auth?.menteeInterests || auth.menteeInterests.length === 0
+    if ((!auth?.mentorInterests || auth.mentorInterests.length === 0) &&
+        (!auth?.menteeInterests || auth.menteeInterests.length === 0)
     ) {
         return (
             <View>
@@ -25,7 +25,7 @@ function CommunitiesScreen() {
     return (
         <NavigationContainer independent={true}>
             <Drawer.Navigator initialRouteName="Communities">
-                {auth?.mentorInterests.map((interest) => (
+                {auth?.mentorInterests?.map((interest) => (
                     <Drawer.Screen
                         key={interest.id}
                         name={interest.name}
@@ -33,7 +33,7 @@ function CommunitiesScreen() {
                         initialParams={{ name: interest.name }} // Pass initialParams with name
                     />
                 ))}
-                {auth?.menteeInterests.map((interest) => (
+                {auth?.menteeInterests?.map((interest) => (
                     <Drawer.Screen
                         key={interest.id}
                         name={interest.name}
