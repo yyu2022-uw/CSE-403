@@ -11,7 +11,7 @@ import FindNewInterestMessage from '@/components/profile/FindNewInterestMessage'
 import { useAuth } from 'providers/AuthProvider';
 import { supabase } from 'lib/supabase';
 import Bio from '@/components/profile/Bio';
-import { Redirect } from 'expo-router';
+import { Redirect, useFocusEffect } from 'expo-router';
 import { Interest } from '@/data/interests';
 
 export default function Profile() {
@@ -27,94 +27,96 @@ export default function Profile() {
     const [menteeInterests, setMenteeInterests] = useState<Interest[]>()
 
     useEffect(() => {
+
+        async function getProfile() {
+            try {
+                console.log("getting profile")
+                setLoading(true)
+                if (!auth?.session?.user) throw new Error('No user on the session!')
+
+                const { data, error, status } = await supabase
+                    .from('profiles')
+                    .select(`full_name, username, avatar_url, bio`)
+                    .eq('id', auth?.session?.user.id)
+                    .single()
+                if (error && status !== 406) {
+                    throw error
+                }
+
+                if (data) {
+                    setFullName(data.full_name)
+                    setUsername(data.username)
+                    setAvatarUrl(data.avatar_url)
+                    setBio(data.bio)
+                }
+            } catch (error) {
+                if (error instanceof Error) {
+                    Alert.alert(error.message)
+                }
+            } finally {
+                setLoading(false)
+            }
+
+        }
+
+        const fetchMentorInterests = async () => {
+            let { data, error } = await supabase
+                .from('user_interests')
+                .select('interests(*)') // Get all fields from both user_interests and related interests
+                .eq('uid', auth?.user?.id)
+                .eq('is_mentor', true);
+
+            if (error) throw error;
+
+            if (data) {
+                console.log("data " + data);
+                // Transform the data to match the expected structure
+                const interests: Interest[] = data.map((item: any) => ({
+                    id: item.interests.id,
+                    name: item.interests.name,
+                    color: item.interests.color,
+                    icon: item.interests.icon,
+                }));
+
+                console.log("interests: " + interests);
+
+                setMentorInterests(interests);
+                console.log("mentor interests: " + mentorInterests);
+            }
+
+        }
+
+        const fetchMenteeInterests = async () => {
+            let { data, error } = await supabase
+                .from('user_interests')
+                .select('interests(*)') // Get all fields from both user_interests and related interests
+                .eq('uid', auth?.user?.id)
+                .eq('is_mentor', false);
+
+            if (error) throw error;
+
+            if (data) {
+                // Transform the data to match the expected structure
+                const interests: Interest[] = data.map((item: any) => ({
+                    id: item.interests.id,
+                    name: item.interests.name,
+                    color: item.interests.color,
+                    icon: item.interests.icon,
+                }));
+
+                setMenteeInterests(interests);
+                console.log("mentee interests: " + menteeInterests);
+            }
+
+        }
+
         if (auth?.session?.user || auth?.profile) {
             getProfile();
             fetchMentorInterests();
             fetchMenteeInterests();
         }
-    }, [auth?.profile, auth?.session]);
 
-    async function getProfile() {
-        try {
-            console.log("getting profile")
-            setLoading(true)
-            if (!auth?.session?.user) throw new Error('No user on the session!')
-
-            const { data, error, status } = await supabase
-                .from('profiles')
-                .select(`full_name, username, avatar_url, bio`)
-                .eq('id', auth?.session?.user.id)
-                .single()
-            if (error && status !== 406) {
-                throw error
-            }
-
-            if (data) {
-                setFullName(data.full_name)
-                setUsername(data.username)
-                setAvatarUrl(data.avatar_url)
-                setBio(data.bio)
-            }
-        } catch (error) {
-            if (error instanceof Error) {
-                Alert.alert(error.message)
-            }
-        } finally {
-            setLoading(false)
-        }
-
-    }
-
-    const fetchMentorInterests = async () => {
-        let { data, error } = await supabase
-            .from('user_interests')
-            .select('interests(*)') // Get all fields from both user_interests and related interests
-            .eq('uid', auth?.user?.id)
-            .eq('is_mentor', true);
-
-        if (error) throw error;
-
-        if (data) {
-            console.log("data " + data);
-            // Transform the data to match the expected structure
-            const interests: Interest[] = data.map((item: any) => ({
-                id: item.interests.id,
-                name: item.interests.name,
-                color: item.interests.color,
-                icon: item.interests.icon,
-            }));
-
-            console.log("interests: " + interests);
-
-            setMentorInterests(interests);
-            console.log("mentor interests: " + mentorInterests);
-        }
-
-    }
-
-    const fetchMenteeInterests = async () => {
-        let { data, error } = await supabase
-            .from('user_interests')
-            .select('interests(*)') // Get all fields from both user_interests and related interests
-            .eq('uid', auth?.user?.id)
-            .eq('is_mentor', false);
-
-        if (error) throw error;
-
-        if (data) {
-            // Transform the data to match the expected structure
-            const interests: Interest[] = data.map((item: any) => ({
-                id: item.interests.id,
-                name: item.interests.name,
-                color: item.interests.color,
-                icon: item.interests.icon,
-            }));
-
-            setMenteeInterests(interests);
-            console.log("mentee interests: " + menteeInterests);
-        }
-
-    }
+    });
 
     return (
         <SafeAreaView style={styles.container}>
@@ -134,13 +136,13 @@ export default function Profile() {
                             <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
                                 Mentoring
                             </Text>
-                            <InterestsList interests={mentorInterests} onUpdate={fetchMentorInterests} />
+                            <InterestsList interests={mentorInterests} onUpdate={() => { }} />
                         </View>
                         <View>
                             <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
                                 Menteeing
                             </Text>
-                            <InterestsList interests={menteeInterests} onUpdate={fetchMenteeInterests} />
+                            <InterestsList interests={menteeInterests} onUpdate={() => { }} />
                         </View>
                     </View>
                     {editing ? (
