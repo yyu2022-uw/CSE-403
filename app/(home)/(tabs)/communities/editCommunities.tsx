@@ -25,11 +25,10 @@ const EditCommunities: React.FC = () => {
         }));
 
         setInterests(combinedInterests);
-        console.log(interests);
-    }, [mentorInterests, menteeInterests]);
+    }, [mentorInterests, menteeInterests, interestsDescription]);
 
     // Update interests in the database
-    async function updateUserInterests() {
+    async function updateUserInterests(updatedInterests: UserInterest[]) {
         if (!auth?.session?.user?.id) {
             console.error("User ID is undefined. Cannot update profile.");
             return;
@@ -46,9 +45,9 @@ const EditCommunities: React.FC = () => {
         }
 
         // Filter interests that are joined
-        const filteredInterests = interests?.filter((interest) => interest.joined);
+        const filteredInterests = updatedInterests.filter((interest) => interest.joined);
 
-        if (filteredInterests?.length === 0) {
+        if (filteredInterests.length === 0) {
             console.warn("No interests with 'joined' status set to true.");
         }
 
@@ -56,7 +55,7 @@ const EditCommunities: React.FC = () => {
         const { data: insertData, error: insertError } = await supabase
             .from('user_interests')
             .upsert(
-                filteredInterests?.map((interest) => ({
+                filteredInterests.map((interest) => ({
                     uid: auth?.user?.id,
                     iid: interest.id,
                     is_mentor: interest.is_mentor
@@ -71,22 +70,23 @@ const EditCommunities: React.FC = () => {
         }
     }
 
-    // Handle status change for interests
     const handleStatusChange = (id: number, status: 'Mentor' | 'Mentee' | 'Not Joined') => {
-        setInterests((prevInterests) =>
-            prevInterests?.map((interest) =>
-                interest.id === id
-                    ? {
-                        ...interest,
-                        is_mentor: status === 'Mentor',
-                        joined: status !== 'Not Joined',
-                    }
-                    : interest
-            )
+        const updatedInterests = interests?.map((interest) =>
+            interest.id === id
+                ? {
+                    ...interest,
+                    is_mentor: status === 'Mentor',
+                    joined: status !== 'Not Joined',
+                }
+                : interest
         );
 
+        setInterests(updatedInterests); // Immediately update the state
+
         // Update interests in the database after change
-        updateUserInterests();
+        if (updatedInterests) {
+            updateUserInterests(updatedInterests); // Pass the updated state to the database
+        }
     };
 
     const renderInterest = ({ item }: { item: UserInterest }) => {

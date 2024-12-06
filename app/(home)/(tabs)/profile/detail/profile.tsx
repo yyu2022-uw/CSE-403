@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, Button, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Interest } from '@/data/interests';
@@ -16,20 +16,17 @@ export default function ProfileScreen() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (id) {
+            console.log("FETCHING INTERESTS")
+            const fetchMentorInterests = async () => {
+                try {
+                    const { data, error } = await supabase
+                        .from('user_interests')
+                        .select('interests(*)')
+                        .eq('uid', id)
+                        .eq('is_mentor', true);
 
-        const fetchMentorInterests = async () => {
-            try {
-                let { data, error } = await supabase
-                    .from('user_interests')
-                    .select('interests(*)') // Get all fields from both user_interests and related interests
-                    .eq('uid', id)
-                    .eq('is_mentor', true);
-
-                if (error) throw error;
-
-                if (data) {
-                    console.log("data " + data);
-                    // Transform the data to match the expected structure
+                    if (error) throw error;
                     const interests: Interest[] = data.map((item: any) => ({
                         id: item.interests.id,
                         name: item.interests.name,
@@ -37,48 +34,42 @@ export default function ProfileScreen() {
                         icon: item.interests.icon,
                     }));
                     setMentorInterests(interests);
+                    console.log("Mentor interests: " + interests)
+                } catch (error) {
+                    console.error('Failed to fetch mentor interests:', error);
+                } finally {
+                    setLoading(false);
                 }
-                setLoading(false);
-            } catch (error) {
-                setLoading(false);
-            }
+            };
 
-        }
+            const fetchMenteeInterests = async () => {
+                try {
+                    const { data, error } = await supabase
+                        .from('user_interests')
+                        .select('interests(*)')
+                        .eq('uid', id)
+                        .eq('is_mentor', false);
 
-        const fetchMenteeInterests = async () => {
-            try {
-                let { data, error } = await supabase
-                    .from('user_interests')
-                    .select('interests(*)') // Get all fields from both user_interests and related interests
-                    .eq('uid', id)
-                    .eq('is_mentor', false);
-
-                if (error) throw error;
-
-                if (data) {
-                    // Transform the data to match the expected structure
+                    if (error) throw error;
                     const interests: Interest[] = data.map((item: any) => ({
                         id: item.interests.id,
                         name: item.interests.name,
                         color: item.interests.color,
                         icon: item.interests.icon,
                     }));
-                    setMenteeInterests(interests);
+                    setMenteeInterests(interests || []);
+                } catch (error) {
+                    console.error('Failed to fetch mentee interests:', error);
+                } finally {
+                    setLoading(false);
                 }
-                setLoading(false);
-            } catch (error) {
-                console.error('Failed to fetch mentee interests:', error);
-                setLoading(false);
-            }
+            };
 
-        }
-
-        if (id) {
             fetchMentorInterests();
             fetchMenteeInterests();
-            console.log("USER INTERESTS: " + mentorInterests);
         }
     }, [id]);
+
 
     if (loading) {
         return (
