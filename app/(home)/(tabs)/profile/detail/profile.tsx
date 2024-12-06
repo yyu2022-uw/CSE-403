@@ -70,15 +70,6 @@ export default function ProfileScreen() {
         }
     }, [id]);
 
-
-    if (loading) {
-        return (
-            <View style={styles.centered}>
-                <ActivityIndicator size="large" />
-            </View>
-        );
-    }
-
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.profileContainer}>
@@ -107,13 +98,23 @@ export default function ProfileScreen() {
                             <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
                                 Mentoring
                             </Text>
-                            <InterestsList interests={mentorInterests} onUpdate={() => { }} />
+                            {loading ?
+                                <View style={{ width: 150, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                    <ActivityIndicator size="small" />
+                                </View> :
+                                <InterestsList interests={mentorInterests} onUpdate={() => { }} />
+                            }
                         </View>
                         <View>
                             <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
                                 Menteeing
                             </Text>
-                            <InterestsList interests={menteeInterests} onUpdate={() => { }} />
+                            {loading ?
+                                <View style={{ width: 150, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                    <ActivityIndicator size="small" />
+                                </View> :
+                                <InterestsList interests={menteeInterests} onUpdate={() => { }} />
+                            }
                         </View>
                     </View>
                 </View>
