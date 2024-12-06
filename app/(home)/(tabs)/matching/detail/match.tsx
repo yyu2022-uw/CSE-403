@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Text, View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { supabase } from 'lib/supabase';
 import { router, useLocalSearchParams } from 'expo-router';
+import { Interest } from '@/data/interests';
 
 export default function MatchingScreen() {
   const { iid } = useLocalSearchParams();
-  const [mentor, setMentor] = useState<{ username: string; full_name: string; avatar_url: string; bio: string } | null>(null);
+  const [mentor, setMentor] = useState<{ id: string; username: string; full_name: string; avatar_url: string; bio: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,7 +26,7 @@ export default function MatchingScreen() {
           // Fetch the mentor's profile details
           let { data: mentor } = await supabase
             .from('profiles')
-            .select('username, full_name, avatar_url, bio')
+            .select('id, username, full_name, avatar_url, bio')
             .eq('id', randomMentor)
             .single();
 

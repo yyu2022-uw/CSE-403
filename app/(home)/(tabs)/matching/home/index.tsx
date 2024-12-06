@@ -4,6 +4,7 @@ import { supabase } from "lib/supabase";
 import { useEffect, useState } from "react";
 
 interface Profile {
+  id: string;
   username: string;
   full_name: string;
   avatar_url: string;
@@ -21,7 +22,7 @@ export default function MentorCommunityScreen({ route }) {
       try {
         let { data: communityMentors } = await supabase
           .from('user_interests')
-          .select('profiles (username, full_name, avatar_url, bio)')
+          .select('profiles (id, username, full_name, avatar_url, bio)')
           .eq('iid', iid)
           .eq('is_mentor', true)
           .limit(3);
@@ -63,7 +64,7 @@ export default function MentorCommunityScreen({ route }) {
       {mentors.map((mentor, index) => (
         <TouchableOpacity key={index} style={styles.card} onPress={() =>
           router.push(
-            `/(home)/(tabs)/matching/detail/mentorDetail?username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
+            `/(home)/(tabs)/matching/detail/mentorDetail?id=${mentor.id}&username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
           )}>
           <Text style={styles.mentorName}>{mentor.full_name}</Text>
         </TouchableOpacity>
