@@ -1,10 +1,92 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, Button } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, StyleSheet, ScrollView, Button, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
+import { Interest } from '@/data/interests';
+import { supabase } from 'lib/supabase';
+import InterestsList from '@/components/profile/InterestsList';
+import { sizes } from '@Sizes';
+import { spacing } from '@Spacing';
+import Divider from '@/components/Divider';
 
 export default function MentorDetailScreen() {
-  const { username, full_name, avatar_url, bio } = useLocalSearchParams();
+  const { id, username, full_name, avatar_url, bio } = useLocalSearchParams();
   const validAvatarUrl = Array.isArray(avatar_url) ? avatar_url[0] : avatar_url;
+  const [mentorInterests, setMentorInterests] = useState<Interest[]>();
+  const [menteeInterests, setMenteeInterests] = useState<Interest[]>();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+
+    const fetchMentorInterests = async () => {
+      try {
+        let { data, error } = await supabase
+          .from('user_interests')
+          .select('interests(*)') // Get all fields from both user_interests and related interests
+          .eq('uid', id)
+          .eq('is_mentor', true);
+
+        if (error) throw error;
+
+        if (data) {
+          console.log("data " + data);
+          // Transform the data to match the expected structure
+          const interests: Interest[] = data.map((item: any) => ({
+            id: item.interests.id,
+            name: item.interests.name,
+            color: item.interests.color,
+            icon: item.interests.icon,
+          }));
+          setMentorInterests(interests);
+        }
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+      }
+
+    }
+
+    const fetchMenteeInterests = async () => {
+      try {
+        let { data, error } = await supabase
+          .from('user_interests')
+          .select('interests(*)') // Get all fields from both user_interests and related interests
+          .eq('uid', id)
+          .eq('is_mentor', false);
+
+        if (error) throw error;
+
+        if (data) {
+          // Transform the data to match the expected structure
+          const interests: Interest[] = data.map((item: any) => ({
+            id: item.interests.id,
+            name: item.interests.name,
+            color: item.interests.color,
+            icon: item.interests.icon,
+          }));
+          setMenteeInterests(interests);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error('Failed to fetch mentee interests:', error);
+        setLoading(false);
+      }
+
+    }
+
+    if (id) {
+      fetchMentorInterests();
+      fetchMenteeInterests();
+      console.log("MENTOR INTERESTS: " + mentorInterests);
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -14,10 +96,10 @@ export default function MentorDetailScreen() {
             <Image
               source={{ uri: validAvatarUrl }}
               accessibilityLabel="Avatar"
-              style={[ styles.avatar, styles.image]}
+              style={[styles.avatar, styles.image]}
             />
           ) : (
-            <View style={[ styles.avatar, styles.noImage]} />
+            <View style={[styles.avatar, styles.noImage]} />
           )}
         </View>
 
@@ -25,9 +107,27 @@ export default function MentorDetailScreen() {
         <Text style={styles.username}>@{username}</Text>
       </View>
       <View style={styles.detailsContainer}>
-        <Text style={styles.heading}>Bio</Text>
+        <Text style={[sizes.subtitle, styles.bio]}>Bio</Text>
         <Text style={styles.bioText}>{bio}</Text>
+        <Divider margin={spacing} />
+        <View style={styles.interests}>
+          <View style={styles.interestsLists}>
+            <View>
+              <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
+                Mentoring
+              </Text>
+              <InterestsList interests={mentorInterests} onUpdate={() => { }} />
+            </View>
+            <View>
+              <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
+                Menteeing
+              </Text>
+              <InterestsList interests={menteeInterests} onUpdate={() => { }} />
+            </View>
+          </View>
+        </View>
       </View>
+
       <Button
         title="Connect with Mentor"
         // onPress={handleConnectPress}
@@ -42,6 +142,11 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 16,
     backgroundColor: '#f8f9fa',
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   profileContainer: {
     alignItems: 'center',
@@ -83,6 +188,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#555',
     lineHeight: 24,
+    paddingLeft: spacing / 4
   },
   image: {
     objectFit: 'cover',
@@ -94,5 +200,24 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderColor: 'rgb(200, 200, 200)',
     borderRadius: 5,
+  },
+  mentorMentee: {
+    paddingBottom: 8
+  },
+  interests: {
+    margin: 'auto',
+    alignItems: 'center',
+    paddingBottom: spacing
+  },
+  interestsLists: {
+    width: 350,
+    paddingTop: spacing / 2,
+    flex: 2,
+    margin: 'auto',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  bio: {
+    paddingLeft: spacing / 4
   },
 });
