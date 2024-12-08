@@ -40,7 +40,7 @@ export default function TabNavigator() {
                 options={{
                     title: 'Profile',
                     tabBarIcon: ({ size, color }) => <FontAwesome6 name="circle-user" size={size} color={color}/>,
-                    headerRight: () => <AntDesign name="logout" size={22} color="black" onPress={() => supabase.auth.signOut()}   style={{ marginRight: 25 }}/>
+                    headerRight: () => <AntDesign name="logout" size={22} color="black" onPress={() => supabase.auth.signOut()} style={{ marginRight: 25 }}/>
                     }
                 }
             />

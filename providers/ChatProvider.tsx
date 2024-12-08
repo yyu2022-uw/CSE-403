@@ -4,45 +4,46 @@ import { StreamChat } from 'stream-chat';
 import { Chat, OverlayProvider } from 'stream-chat-expo';
 import { useAuth } from "./AuthProvider";
 import { Redirect } from "expo-router";
-import Auth from "@/components/login/Auth";
 
-// This constant needs to be replaced with the environment variable, but for some reason I'm having issues here.
 const client = StreamChat.getInstance(process.env.EXPO_PUBLIC_STREAM_API_KEY!);
 
 export default function ChatProvider({ children }: PropsWithChildren) {
   const [isReady, setIsReady] = useState(false);
-  const [loggedOut, setLoggedOut] = useState(false);
-  const profile = useAuth()?.profile;
-  const user = useAuth()?.session?.user;
-
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
+  const auth = useAuth();
+  const profile = auth?.profile;
+  const user = auth?.user;
 
   useEffect(() => {
     if (!user) {
-      console.log("signed out");
-      setLoggedOut(true);
+      setIsLoggedOut(true);
+      return;
     }
 
-    console.log(profile);
     if (!profile) {
       return;
     }
 
-    console.log("From chatProvider: " + profile.id);
+    if (client.userID === profile.id) {
+      setIsReady(true);
+      return;
+    }
+
 
     const connect = async () => {
       try {
+        console.log("Connecting user: ", profile.id);
         await client.connectUser(
           {
             id: profile.id,
             name: profile.full_name,
-            image: 'https://i.imgur.com/fR9Jz14.png',
+            image: profile.avatar_url,
           },
-          client.devToken(profile.id),
+          client.devToken(profile.id)
         );
         setIsReady(true);
       } catch (err) {
-        console.log(profile);
-        console.error(err);
+        console.error("Error connecting user:", err);
       }
     };
 
@@ -50,14 +51,15 @@ export default function ChatProvider({ children }: PropsWithChildren) {
 
     return () => {
       if (isReady) {
+        console.log("Disconnecting user...");
         client.disconnectUser();
       }
       setIsReady(false);
-    }
-  }, [profile?.id])
+    };
+  }, [profile, user]);
 
-  if (loggedOut) {
-    // do something
+  if (isLoggedOut) {
+    return <Redirect href="/(auth)/login" />;
   }
 
   if (!isReady) {
@@ -68,12 +70,9 @@ export default function ChatProvider({ children }: PropsWithChildren) {
     );
   }
 
-
-
   return (
     <OverlayProvider>
       <Chat client={client}>{children}</Chat>
     </OverlayProvider>
-
-  )
+  );
 }
