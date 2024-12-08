@@ -63,7 +63,6 @@ export default function MentorCommunityScreen({ route }) {
       <Text style={styles.title}>Recommended Mentors For The {name} Community</Text>
       {mentors.map((mentor, index) => (
         <TouchableOpacity key={index} style={styles.card} onPress={() => {
-          console.log("PUSHING")
           router.push(
             `/(home)/(tabs)/matching/detail/mentorDetail?id=${mentor.id}&username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
           )
