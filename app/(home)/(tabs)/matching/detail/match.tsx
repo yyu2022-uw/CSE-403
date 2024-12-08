@@ -6,7 +6,7 @@ import { Interest } from '@/data/interests';
 
 export default function MatchingScreen() {
   const { iid } = useLocalSearchParams();
-  const [mentor, setMentor] = useState<{ id: string; username: string; full_name: string; avatar_url: string; bio: string } | null>(null);
+  const [match, setMatch] = useState<{ id: string; username: string; full_name: string; avatar_url: string; bio: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function MatchingScreen() {
             .single();
 
           if (mentor) {
-            setMentor(mentor);
+            setMatch(mentor);
           }
         }
         setLoading(false);
@@ -41,8 +41,40 @@ export default function MatchingScreen() {
       }
     };
 
+    const fetchMentees = async () => {
+      try {
+        // Fetch mentees for the specific community
+        let { data: mentees } = await supabase
+          .from('user_interests')
+          .select('uid')
+          .eq('iid', iid)
+          .eq('is_mentor', false);
+
+        if (mentees && mentees.length > 0) {
+          // Select a random mentor ID
+          const randomMentee = mentees[Math.floor(Math.random() * mentees.length)].uid;
+
+          // Fetch the mentor's profile details
+          let { data: mentee } = await supabase
+            .from('profiles')
+            .select('id, username, full_name, avatar_url, bio')
+            .eq('id', randomMentee)
+            .single();
+
+          if (mentee) {
+            setMatch(mentee);
+          }
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error('Failed to fetch mentees:', error);
+        setLoading(false);
+      }
+    };
+
     if (iid) {
       fetchMentors();
+      fetchMentees();
     }
   }, [iid]);
 
@@ -56,16 +88,16 @@ export default function MatchingScreen() {
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      {mentor ? (
+      {match ? (
         <TouchableOpacity
           onPress={() =>
             router.push(
-              `/(home)/(tabs)/matching/detail/mentorDetail?id=${mentor.id}&username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
+              `/(home)/(tabs)/matching/detail/matchDetail?id=${match.id}&username=${match.username}&full_name=${match.full_name}&avatar_url=${match.avatar_url}&bio=${match.bio}`
             )
           }
         >
           <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>
-            Mentor Matched: {mentor.full_name}
+            Mentor Matched: {match.full_name}
           </Text>
         </TouchableOpacity>
       ) : (

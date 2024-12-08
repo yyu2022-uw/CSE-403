@@ -14,7 +14,7 @@ export default function DrawerNavigator() {
     const user = useAuth()?.user;
 
     if (!user) {
-        return <Redirect href="/(auth)/login"/>;
+        return <Redirect href="/(auth)/login" />;
     }
 
     useFocusEffect(
@@ -28,7 +28,6 @@ export default function DrawerNavigator() {
             interests (name)
           `)
                         .eq('uid', user.id)
-                        .eq('is_mentor', false);
 
                     if (userCommunities) {
                         // Store both 'iid' and 'name' in the state
