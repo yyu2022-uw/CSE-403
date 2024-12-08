@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Text, View, ActivityIndicator } from 'react-native';
 import { supabase } from 'lib/supabase';
 import { router, Slot, useFocusEffect } from 'expo-router';
 import { useAuth } from '@useAuth';
@@ -20,13 +19,11 @@ export default function Profile() {
 
             const fetchUser = async () => {
                 try {
-                    const { data: user, error } = await supabase
+                    const { data: user } = await supabase
                         .from('profiles')
                         .select('id, username, full_name, avatar_url, bio')
                         .eq('id', id)
                         .single();
-
-                    if (error) throw error;
                     setUser(user);
                     setLoading(false);
                 } catch (error) {
