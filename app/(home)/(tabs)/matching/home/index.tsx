@@ -1,7 +1,7 @@
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { supabase } from "lib/supabase";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface Profile {
   id: string;
@@ -17,30 +17,31 @@ export default function MentorCommunityScreen({ route }) {
   const [mentors, setMentors] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchMentors = async () => {
-      try {
-        let { data: communityMentors } = await supabase
-          .from('user_interests')
-          .select('profiles (id, username, full_name, avatar_url, bio)')
-          .eq('iid', iid)
-          .eq('is_mentor', true)
-          .limit(3);
+  useFocusEffect(
+    useCallback(() => {
+      const fetchMentors = async () => {
+        try {
+          let { data: communityMentors } = await supabase
+            .from('user_interests')
+            .select('profiles (id, username, full_name, avatar_url, bio)')
+            .eq('iid', iid)
+            .eq('is_mentor', true)
+            .limit(3);
 
-        if (communityMentors) {
-          const mentors = communityMentors.flatMap((cm: { profiles: Profile[] }) => cm.profiles);
-          setMentors(mentors);
+          if (communityMentors) {
+            const mentors = communityMentors.flatMap((cm: { profiles: Profile[] }) => cm.profiles);
+            setMentors(mentors);
+          }
+          setLoading(false);
+
+        } catch (error) {
+          console.error('Failed to fetch community mentors:', error);
+          setLoading(false);
         }
-        setLoading(false);
+      };
 
-      } catch (error) {
-        console.error('Failed to fetch community mentors:', error);
-        setLoading(false);
-      }
-    };
-
-    fetchMentors();
-  }, [iid]);
+      fetchMentors();
+    }, [iid]));
 
   if (loading) {
     return (
