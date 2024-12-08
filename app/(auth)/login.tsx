@@ -30,7 +30,6 @@ export default function Auth() {
         })
 
         if (error) Alert.alert(error.message)
-        // if (!session) Alert.alert('Please check your inbox for email verification!') // TODO: In a real-world context, emails should have verification
         setLoading(false)
     }
 

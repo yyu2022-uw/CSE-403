@@ -27,7 +27,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const fetchSession = async () => {
       console.log("fetching session")
       try {
-        // await supabase.auth.signOut(); // Uncomment this whenever you want to end the session (log the user out)
         const { data: { session } } = await supabase.auth.getSession();
         setSession(session);
         setLoading(false);
@@ -52,9 +51,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     try {
-
-      // console.log(session.user.id);
-
       const fetchProfile = async () => {
         try {
           let { data } = await supabase

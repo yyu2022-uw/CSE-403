@@ -3,7 +3,6 @@ import { View, Text, ActivityIndicator } from 'react-native';
 import { supabase } from 'lib/supabase';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import MentorCommunityScreen from '.';
-import Auth from '@/components/login/Auth';
 import { useAuth } from '@useAuth';
 import { Redirect, useFocusEffect } from 'expo-router';
 
@@ -15,7 +14,7 @@ export default function DrawerNavigator() {
     const user = useAuth()?.user;
 
     if (!user) {
-        return <Auth />;
+        return <Redirect href="/(auth)/login"/>;
     }
 
     useFocusEffect(

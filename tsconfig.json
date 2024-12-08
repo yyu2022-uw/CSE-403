@@ -12,7 +12,7 @@
       "@Spacing": ["constants/Spacing.ts"],
       "@Sizes": ["constants/Sizes.ts"],
       "@useUser": ["hooks/useUser.tsx"],
-      "@useAuth": ["providers/AuthProvider.tsx"]
+      "@useAuth": ["providers/AuthProvider.tsx"],
     }
   },
   "include": [
