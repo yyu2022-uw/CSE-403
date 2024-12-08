@@ -1,9 +1,10 @@
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { supabase } from "lib/supabase";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface Profile {
+  id: string;
   username: string;
   full_name: string;
   avatar_url: string;
@@ -16,30 +17,31 @@ export default function MentorCommunityScreen({ route }) {
   const [mentors, setMentors] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchMentors = async () => {
-      try {
-        let { data: communityMentors } = await supabase
-          .from('user_interests')
-          .select('profiles (username, full_name, avatar_url, bio)')
-          .eq('iid', iid)
-          .eq('is_mentor', true)
-          .limit(3);
+  useFocusEffect(
+    useCallback(() => {
+      const fetchMentors = async () => {
+        try {
+          let { data: communityMentors } = await supabase
+            .from('user_interests')
+            .select('profiles (id, username, full_name, avatar_url, bio)')
+            .eq('iid', iid)
+            .eq('is_mentor', true)
+            .limit(3);
 
-        if (communityMentors) {
-          const mentors = communityMentors.flatMap((cm: { profiles: Profile[] }) => cm.profiles);
-          setMentors(mentors);
+          if (communityMentors) {
+            const mentors = communityMentors.flatMap((cm: { profiles: Profile[] }) => cm.profiles);
+            setMentors(mentors);
+          }
+          setLoading(false);
+
+        } catch (error) {
+          console.error('Failed to fetch community mentors:', error);
+          setLoading(false);
         }
-        setLoading(false);
+      };
 
-      } catch (error) {
-        console.error('Failed to fetch community mentors:', error);
-        setLoading(false);
-      }
-    };
-
-    fetchMentors();
-  }, [iid]);
+      fetchMentors();
+    }, [iid]));
 
   if (loading) {
     return (
@@ -61,10 +63,17 @@ export default function MentorCommunityScreen({ route }) {
     <View style={styles.container}>
       <Text style={styles.title}>Recommended Mentors For The {name} Community</Text>
       {mentors.map((mentor, index) => (
-        <TouchableOpacity key={index} style={styles.card} onPress={() =>
+        <TouchableOpacity key={index} style={styles.card} onPress={() => {
           router.push(
-            `/(home)/(tabs)/matching/detail/mentorDetail?username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
-          )}>
+            `/(home)/(tabs)/matching/detail/mentorDetail?id=${mentor.id}&username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
+          )
+          // router.back(
+          //   `/(home)/(tabs)/matching/detail/mentorDetail?id=${mentor.id}&username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
+          // )
+          // router.push(
+          //   `/mentorDetail?id=${mentor.id}&username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
+          // )
+        }}>
           <Text style={styles.mentorName}>{mentor.full_name}</Text>
         </TouchableOpacity>
       ))}

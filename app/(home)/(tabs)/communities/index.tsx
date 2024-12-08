@@ -1,35 +1,35 @@
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Interest } from '@/data/interests';
 import { useAuth } from '@useAuth';
 import { supabase } from 'lib/supabase';
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
 
 interface UserInterest extends Interest {
     is_mentor: boolean;
     joined: boolean;
 }
 
-const EditCommunities: React.FC = () => {
+function EditCommunities() {
     const auth = useAuth();
 
-    const [mentorInterests, setMentorInterests] = useState<Interest[] | null | undefined>(auth?.mentorInterests);
-    const [menteeInterests, setMenteeInterests] = useState<Interest[] | null | undefined>(auth?.menteeInterests);
-    const [interestsDescription, setInterestsDescription] = useState<Interest[] | null | undefined>(auth?.interests);
     const [interests, setInterests] = useState<UserInterest[] | null | undefined>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const combinedInterests = interestsDescription?.map((interest) => ({
+        setLoading(true); // Start loading
+
+        const combinedInterests = auth?.interests?.map((interest) => ({
             ...interest,
-            is_mentor: mentorInterests?.some((mentor) => mentor.id === interest.id) || false,
-            joined: mentorInterests?.some((mentor) => mentor.id === interest.id) || menteeInterests?.some((mentee) => mentee.id === interest.id) || false,
+            is_mentor: auth?.mentorInterests?.some((mentor) => mentor.id === interest.id) || false,
+            joined: auth?.mentorInterests?.some((mentor) => mentor.id === interest.id) || auth?.menteeInterests?.some((mentee) => mentee.id === interest.id) || false,
         }));
 
-        setInterests(combinedInterests);
-        console.log(interests);
-    }, [mentorInterests, menteeInterests]);
+        setInterests(combinedInterests || []);
+        setLoading(false); // End loading
+    }, [auth?.mentorInterests, auth?.menteeInterests, auth?.interests]);
 
     // Update interests in the database
-    async function updateUserInterests() {
+    async function updateUserInterests(updatedInterests: UserInterest[]) {
         if (!auth?.session?.user?.id) {
             console.error("User ID is undefined. Cannot update profile.");
             return;
@@ -46,9 +46,9 @@ const EditCommunities: React.FC = () => {
         }
 
         // Filter interests that are joined
-        const filteredInterests = interests?.filter((interest) => interest.joined);
+        const filteredInterests = updatedInterests.filter((interest) => interest.joined);
 
-        if (filteredInterests?.length === 0) {
+        if (filteredInterests.length === 0) {
             console.warn("No interests with 'joined' status set to true.");
         }
 
@@ -56,10 +56,10 @@ const EditCommunities: React.FC = () => {
         const { data: insertData, error: insertError } = await supabase
             .from('user_interests')
             .upsert(
-                filteredInterests?.map((interest) => ({
+                filteredInterests.map((interest) => ({
                     uid: auth?.user?.id,
                     iid: interest.id,
-                    is_mentor: interest.is_mentor
+                    is_mentor: interest.is_mentor,
                 }))
             )
             .select();
@@ -71,26 +71,26 @@ const EditCommunities: React.FC = () => {
         }
     }
 
-    // Handle status change for interests
     const handleStatusChange = (id: number, status: 'Mentor' | 'Mentee' | 'Not Joined') => {
-        setInterests((prevInterests) =>
-            prevInterests?.map((interest) =>
-                interest.id === id
-                    ? {
-                        ...interest,
-                        is_mentor: status === 'Mentor',
-                        joined: status !== 'Not Joined',
-                    }
-                    : interest
-            )
+        const updatedInterests = interests?.map((interest) =>
+            interest.id === id
+                ? {
+                    ...interest,
+                    is_mentor: status === 'Mentor',
+                    joined: status !== 'Not Joined',
+                }
+                : interest
         );
 
+        setInterests(updatedInterests); // Immediately update the state
+
         // Update interests in the database after change
-        updateUserInterests();
+        if (updatedInterests) {
+            updateUserInterests(updatedInterests); // Pass the updated state to the database
+        }
     };
 
     const renderInterest = ({ item }: { item: UserInterest }) => {
-        // Determine if the interest is marked as a mentor or mentee based on initial values
         const isMentor = item.is_mentor;
         const isMentee = item.joined && !isMentor;
 
@@ -103,9 +103,7 @@ const EditCommunities: React.FC = () => {
                             key={status}
                             style={[
                                 styles.statusButton,
-                                // Apply highlight based on the current status
-                                (status === 'Mentor' && isMentor) ||
-                                    (status === 'Mentee' && isMentee)
+                                (status === 'Mentor' && isMentor) || (status === 'Mentee' && isMentee)
                                     ? styles.selectedButton
                                     : {},
                             ]}
@@ -114,9 +112,7 @@ const EditCommunities: React.FC = () => {
                             <Text
                                 style={[
                                     styles.statusButtonText,
-                                    // Change text color when selected
-                                    (status === 'Mentor' && isMentor) ||
-                                        (status === 'Mentee' && isMentee)
+                                    (status === 'Mentor' && isMentor) || (status === 'Mentee' && isMentee)
                                         ? { color: '#fff' }
                                         : {},
                                 ]}
@@ -149,16 +145,18 @@ const EditCommunities: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <FlatList
-                data={interests}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={renderInterest}
-            />
+            {loading ? (
+                <ActivityIndicator size="large" color="#0000ff" />
+            ) : (
+                <FlatList
+                    data={interests}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={renderInterest}
+                />
+            )}
         </View>
     );
 };
-
-export default EditCommunities;
 
 const styles = StyleSheet.create({
     container: {
@@ -198,3 +196,5 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
+
+export default EditCommunities;
