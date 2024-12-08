@@ -19,7 +19,6 @@ export default function Profile() {
         useCallback(() => {
 
             const fetchUser = async () => {
-                console.log("FETCHING USER");
                 try {
                     const { data: user, error } = await supabase
                         .from('profiles')
@@ -43,25 +42,11 @@ export default function Profile() {
 
     useEffect(() => {
         if (user) {
-            console.log("PUSHING INDEX")
             router.push(
                 `/(home)/(tabs)/profile/detail/profile?id=${user.id}&username=${user.username}&full_name=${user.full_name}&avatar_url=${user.avatar_url}&bio=${user.bio}`
             );
         }
     }, [user]);
-
-
-    // if (loading) {
-    //     return (
-    //         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    //             <ActivityIndicator size="large" />
-    //         </View>
-    //     );
-    // } else {
-    //     return (
-    //         <Slot />
-    //     )
-    // }
 
     return (
         <Slot />
