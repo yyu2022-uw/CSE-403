@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, Button, ActivityIndicator } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { Interest } from '@/data/interests';
 import { supabase } from 'lib/supabase';
 import InterestsList from '@/components/profile/InterestsList';
@@ -8,28 +8,36 @@ import { sizes } from '@Sizes';
 import { spacing } from '@Spacing';
 import Divider from '@/components/Divider';
 
-export default function MentorDetailScreen() {
+export default function MentorDetailScreen() { // Include navigation as prop
   const { id, username, full_name, avatar_url, bio } = useLocalSearchParams();
   const validAvatarUrl = Array.isArray(avatar_url) ? avatar_url[0] : avatar_url;
   const [mentorInterests, setMentorInterests] = useState<Interest[]>();
   const [menteeInterests, setMenteeInterests] = useState<Interest[]>();
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const navigation = useNavigation();
 
+  // Set the screen title name to "Details for {full_name}"
+  useEffect(() => {
+    if (navigation && full_name) {
+      navigation.setOptions({
+        title: `Details for ${full_name}`,
+      });
+    }
+  }, [navigation, full_name]);
+
+  useEffect(() => {
     const fetchMentorInterests = async () => {
       try {
         let { data, error } = await supabase
           .from('user_interests')
-          .select('interests(*)') // Get all fields from both user_interests and related interests
+          .select('interests(*)')
           .eq('uid', id)
           .eq('is_mentor', true);
 
         if (error) throw error;
 
         if (data) {
-          console.log("data " + data);
-          // Transform the data to match the expected structure
           const interests: Interest[] = data.map((item: any) => ({
             id: item.interests.id,
             name: item.interests.name,
@@ -42,21 +50,19 @@ export default function MentorDetailScreen() {
       } catch (error) {
         setLoading(false);
       }
-
-    }
+    };
 
     const fetchMenteeInterests = async () => {
       try {
         let { data, error } = await supabase
           .from('user_interests')
-          .select('interests(*)') // Get all fields from both user_interests and related interests
+          .select('interests(*)')
           .eq('uid', id)
           .eq('is_mentor', false);
 
         if (error) throw error;
 
         if (data) {
-          // Transform the data to match the expected structure
           const interests: Interest[] = data.map((item: any) => ({
             id: item.interests.id,
             name: item.interests.name,
@@ -67,18 +73,15 @@ export default function MentorDetailScreen() {
         }
         setLoading(false);
       } catch (error) {
-        console.error('Failed to fetch mentee interests:', error);
         setLoading(false);
       }
-
-    }
+    };
 
     if (id) {
       fetchMentorInterests();
       fetchMenteeInterests();
-      console.log("MENTOR INTERESTS: " + mentorInterests);
     }
-  }, [id]);
+  }, [id, full_name, navigation]); // Make sure full_name and navigation are included as dependencies
 
   if (loading) {
     return (
@@ -188,7 +191,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#555',
     lineHeight: 24,
-    paddingLeft: spacing / 4
+    paddingLeft: spacing / 4,
   },
   image: {
     objectFit: 'cover',
@@ -202,12 +205,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   mentorMentee: {
-    paddingBottom: 8
+    paddingBottom: 8,
   },
   interests: {
     margin: 'auto',
     alignItems: 'center',
-    paddingBottom: spacing
+    paddingBottom: spacing,
   },
   interestsLists: {
     width: 350,
@@ -218,6 +221,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   bio: {
-    paddingLeft: spacing / 4
+    paddingLeft: spacing / 4,
   },
 });
