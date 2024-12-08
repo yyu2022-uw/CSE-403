@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { supabase } from 'lib/supabase';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import MentorCommunityScreen from '.';
 import Auth from '@/components/login/Auth';
 import { useAuth } from '@useAuth';
-import { Redirect } from 'expo-router';
+import { Redirect, useFocusEffect } from 'expo-router';
 
 const Drawer = createDrawerNavigator();
 
@@ -18,35 +18,36 @@ export default function DrawerNavigator() {
     return <Auth />;
   }
 
-  useEffect(() => {
-    const fetchCommunities = async () => {
-      try {
-        let { data: userCommunities } = await supabase
-          .from('user_interests')
-          .select(`
+  useFocusEffect(
+    useCallback(() => {
+      const fetchCommunities = async () => {
+        try {
+          let { data: userCommunities } = await supabase
+            .from('user_interests')
+            .select(`
             iid,
             interests (name)
           `)
-          .eq('uid', user.id)
-          .eq('is_mentor', false);
+            .eq('uid', user.id)
+            .eq('is_mentor', false);
 
-        if (userCommunities) {
-          // Store both 'iid' and 'name' in the state
-          const community = userCommunities.map((uc: any) => ({
-            iid: uc.iid,
-            name: uc.interests.name,
-          }));
-          setCommunities(community);
+          if (userCommunities) {
+            // Store both 'iid' and 'name' in the state
+            const community = userCommunities.map((uc: any) => ({
+              iid: uc.iid,
+              name: uc.interests.name,
+            }));
+            setCommunities(community);
+          }
+          setLoading(false);
+        } catch (error) {
+          console.error('Failed to fetch communities:', error);
+          setLoading(false);
         }
-        setLoading(false);
-      } catch (error) {
-        console.error('Failed to fetch communities:', error);
-        setLoading(false);
-      }
-    };
+      };
 
-    fetchCommunities();
-  }, [user]);
+      fetchCommunities();
+    }, [user]));
 
   if (loading) {
     return (
