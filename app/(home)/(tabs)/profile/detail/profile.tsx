@@ -22,7 +22,6 @@ export default function ProfileScreen() {
 
     useEffect(() => {
         if (id) {
-            console.log("FETCHING INTERESTS")
             const fetchMentorInterests = async () => {
                 try {
                     const { data, error } = await supabase
