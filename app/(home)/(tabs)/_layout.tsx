@@ -1,9 +1,16 @@
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { AuthProvider } from "@useAuth";
+import { supabase } from "lib/supabase";
+import AppScreen from "app";
+import { useState } from "react";
+import { StyleSheet } from "react-native";
+
 
 export default function TabNavigator() {
+
     return <AuthProvider>
         <Tabs>
             <Tabs.Screen
@@ -32,8 +39,10 @@ export default function TabNavigator() {
                 name="profile"
                 options={{
                     title: 'Profile',
-                    tabBarIcon: ({ size, color }) => <FontAwesome6 name="circle-user" size={size} color={color} />
-                }}
+                    tabBarIcon: ({ size, color }) => <FontAwesome6 name="circle-user" size={size} color={color}/>,
+                    headerRight: () => <AntDesign name="logout" size={22} color="black" onPress={() => supabase.auth.signOut()} style={{ marginRight: 25 }}/>
+                    }
+                }
             />
         </Tabs>
     </AuthProvider>
