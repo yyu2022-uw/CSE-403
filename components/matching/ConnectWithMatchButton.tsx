@@ -14,7 +14,7 @@ const ConnectWithMatchButton: React.FC<ConnectWithMatchButtonProps> = ({ onClick
 
   const buttonColor = isPressed ? Colors.light.button_purple_dark : Colors.light.button_purple;
   const buttonTextColor = isPressed ? Colors.light.buttonText_purple_dark : Colors.light.buttonText_purple;
-  const buttonText = 'Connect With Match';
+  const buttonText = 'Connect With User';
   const buttonIcon = 'person-add';
 
   return (
