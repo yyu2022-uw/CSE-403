@@ -102,7 +102,15 @@ export default function MatchingScreen() {
             )
           }
         >
-          <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>
+          <Text
+            style={{
+              color: 'purple',
+              textDecorationLine: 'underline',
+              textDecorationStyle: 'solid',
+              textDecorationColor: 'purple',
+              fontSize: 18,
+            }}
+          >
             Matched with {!isMentor ? "mentor" : "mentee"}: {match.full_name}
           </Text>
         </TouchableOpacity>
