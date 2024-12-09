@@ -16,7 +16,7 @@ function EditCommunities() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setLoading(true); // Start loading
+        setLoading(true);
 
         const combinedInterests = auth?.interests?.map((interest) => ({
             ...interest,
@@ -25,7 +25,7 @@ function EditCommunities() {
         }));
 
         setInterests(combinedInterests || []);
-        setLoading(false); // End loading
+        setLoading(false);
     }, [auth?.mentorInterests, auth?.menteeInterests, auth?.interests]);
 
     // Update interests in the database
@@ -143,17 +143,21 @@ function EditCommunities() {
         );
     };
 
+    if (loading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" />
+            </View>
+        );
+    }
+
     return (
         <View style={styles.container}>
-            {loading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
-            ) : (
-                <FlatList
-                    data={interests}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={renderInterest}
-                />
-            )}
+            <FlatList
+                data={interests}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={renderInterest}
+            />
         </View>
     );
 };

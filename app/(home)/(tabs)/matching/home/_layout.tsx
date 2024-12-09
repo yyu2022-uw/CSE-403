@@ -14,7 +14,7 @@ export default function DrawerNavigator() {
     const user = useAuth()?.user;
 
     if (!user) {
-        return <Redirect href="/(auth)/login"/>;
+        return <Redirect href="/(auth)/login" />;
     }
 
     useFocusEffect(
@@ -26,17 +26,27 @@ export default function DrawerNavigator() {
                         .select(`
             iid,
             interests (name)
+            is_mentor
           `)
                         .eq('uid', user.id)
-                        .eq('is_mentor', false);
 
                     if (userCommunities) {
                         // Store both 'iid' and 'name' in the state
                         const community = userCommunities.map((uc: any) => ({
                             iid: uc.iid,
                             name: uc.interests.name,
+                            isMentor: uc.is_mentor == "true" ? true : false,
                         }));
-                        setCommunities(community);
+
+                        // Sort by mentors, then mentees
+                        const sortedCommunities = community.sort((a, b) => {
+                            if (a.isMentor && !b.isMentor) return -1;
+                            if (!a.isMentor && b.isMentor) return 1;
+                            return 0;
+                        });
+
+                        console.log("community", sortedCommunities)
+                        setCommunities(sortedCommunities);
                     }
                     setLoading(false);
                 } catch (error) {
@@ -62,18 +72,23 @@ export default function DrawerNavigator() {
 
     return (
         <Drawer.Navigator initialRouteName="Matching">
-            {communities.map((community, index) => (
-                <Drawer.Screen
-                    key={index}
-                    name={community.name}
-                    component={MentorCommunityScreen}
-                    initialParams={{ iid: community.iid, name: community.name }}
-                    options={{
-                        drawerLabel: community.name,
-                        title: "Matching",
-                    }}
-                />
-            ))}
+            {communities
+                .filter((value, index, self) =>
+                    // Only keep communities with unique 'iid'
+                    index === self.findIndex((t) => t.iid === value.iid)
+                )
+                .map((community, index) => (
+                    <Drawer.Screen
+                        key={index}
+                        name={community.name}
+                        component={MentorCommunityScreen}
+                        initialParams={{ iid: community.iid, name: community.name }}
+                        options={{
+                            drawerLabel: community.name,
+                            title: "Matching",
+                        }}
+                    />
+                ))}
         </Drawer.Navigator>
     );
 }

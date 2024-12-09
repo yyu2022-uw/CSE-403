@@ -5,28 +5,24 @@ import { spacing } from '@Spacing';
 import { sizes } from '@Sizes';
 import { Ionicons } from '@expo/vector-icons'; // Import the Ionicons
 
-let buttonColor = Colors.light.button;
-let buttonTextColor = Colors.light.buttonText;
+let buttonColor = Colors.light.button_blue;
+let buttonTextColor = Colors.light.buttonText_blue;
 
 type EditProfileButtonProps = {
     editing: boolean;
     setEditing: (editing: boolean) => void;
-    onUpdate: () => void;
 };
 
-const EditProfileButton: React.FC<EditProfileButtonProps> = ({ editing, setEditing, onUpdate }) => {
+const EditProfileButton: React.FC<EditProfileButtonProps> = ({ editing, setEditing }) => {
 
-    const buttonColor = !editing ? Colors.light.button : Colors.light.buttonSave;
-    const buttonTextColor = !editing ? Colors.light.buttonText : Colors.light.buttonSaveText;
+    const buttonColor = !editing ? Colors.light.button_blue : Colors.light.button_gray;
+    const buttonTextColor = !editing ? Colors.light.buttonText_blue : Colors.light.buttonText_gray;
     const buttonText = !editing ? 'Edit Profile' : 'Save Edits';
     const buttonIcon = !editing ? 'pencil' : 'save';
 
     return (
         <Pressable
             onPress={() => {
-                if (editing) {
-                    onUpdate(); // Call the update function if in editing mode
-                }
                 setEditing(!editing)
             }}
             style={[styles.container, { backgroundColor: buttonColor }]}>

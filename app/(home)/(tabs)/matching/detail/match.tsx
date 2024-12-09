@@ -1,23 +1,61 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { supabase } from 'lib/supabase';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Interest } from '@/data/interests';
+import { useAuth } from '@useAuth';
 
 export default function MatchingScreen() {
+  const auth = useAuth();
   const { iid } = useLocalSearchParams();
-  const [mentor, setMentor] = useState<{ id: string; username: string; full_name: string; avatar_url: string; bio: string } | null>(null);
+  const [match, setMatch] = useState<{ id: string; username: string; full_name: string; avatar_url: string; bio: string } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isMentor, setIsMentor] = useState(false);
+
+  const navigation = useNavigation();
+
+  // Set the screen title name to "Random Match Results"
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Random Match Results',
+    });
+  }, [navigation]);
+
 
   useEffect(() => {
-    const fetchMentors = async () => {
+    const fetchIsMentor = async () => {
+      try {
+        let { data } = await supabase
+          .from('user_interests')
+          .select(`
+            is_mentor
+          `)
+          .eq('iid', iid)
+          .eq('uid', auth?.user?.id)
+          .single()
+
+        if (data) {
+          console.log("data.is_mentor", data.is_mentor);
+          const is_mentor = data.is_mentor === ' true' || data.is_mentor === 'true' || data.is_mentor === true;
+          console.log("is_mentor", is_mentor);
+          setIsMentor(is_mentor);
+          fetchMentors(is_mentor);
+        }
+      } catch (error) {
+        console.error('Failed to fetch communities:', error);
+        setLoading(false);
+      }
+    };
+
+    const fetchMentors = async (is_mentor: boolean) => {
       try {
         // Fetch mentors for the specific community
         let { data: mentors } = await supabase
           .from('user_interests')
           .select('uid')
           .eq('iid', iid)
-          .eq('is_mentor', true);
+          .neq('uid', auth?.user?.id)
+          .eq('is_mentor', !is_mentor);  // Based on if you are a mentor or mentee
 
         if (mentors && mentors.length > 0) {
           // Select a random mentor ID
@@ -31,7 +69,7 @@ export default function MatchingScreen() {
             .single();
 
           if (mentor) {
-            setMentor(mentor);
+            setMatch(mentor);
           }
         }
         setLoading(false);
@@ -42,7 +80,7 @@ export default function MatchingScreen() {
     };
 
     if (iid) {
-      fetchMentors();
+      fetchIsMentor();
     }
   }, [iid]);
 
@@ -56,20 +94,20 @@ export default function MatchingScreen() {
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      {mentor ? (
+      {match ? (
         <TouchableOpacity
           onPress={() =>
             router.push(
-              `/(home)/(tabs)/matching/detail/mentorDetail?id=${mentor.id}&username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
+              `/(home)/(tabs)/matching/detail/matchDetail?id=${match.id}&username=${match.username}&full_name=${match.full_name}&avatar_url=${match.avatar_url}&bio=${match.bio}`
             )
           }
         >
           <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>
-            Mentor Matched: {mentor.full_name}
+            Matched with {!isMentor ? "mentor" : "mentee"}: {match.full_name}
           </Text>
         </TouchableOpacity>
       ) : (
-        <Text>No mentors available for this community.</Text>
+        <Text>No {!isMentor ? "mentors" : "mentees"} available for this community.</Text>
       )}
     </View>
   );

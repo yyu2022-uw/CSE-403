@@ -1,4 +1,4 @@
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useContext, useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { StreamChat } from 'stream-chat';
 import { Chat, OverlayProvider } from 'stream-chat-expo';
@@ -29,9 +29,11 @@ export default function ChatProvider({ children }: PropsWithChildren) {
       return;
     }
 
-
     const connect = async () => {
       try {
+        console.log("user", user)
+        console.log("profile", profile)
+        console.log("isLoggedOut ", isLoggedOut);
         console.log("Connecting user: ", profile.id);
         await client.connectUser(
           {
