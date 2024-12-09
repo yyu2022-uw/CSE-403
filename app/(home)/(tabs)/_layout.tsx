@@ -4,7 +4,12 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { AuthProvider } from "@useAuth";
 import { supabase } from "lib/supabase";
+import AppScreen from "app";
+import { useState } from "react";
+import { StyleSheet } from "react-native";
+import { StreamChat } from 'stream-chat';
 
+const client = StreamChat.getInstance(process.env.EXPO_PUBLIC_STREAM_API_KEY!);
 
 export default function TabNavigator() {
 
@@ -36,9 +41,14 @@ export default function TabNavigator() {
                 name="profile"
                 options={{
                     title: 'Profile',
-                    tabBarIcon: ({ size, color }) => <FontAwesome6 name="circle-user" size={size} color={color}/>,
-                    headerRight: () => <AntDesign name="logout" size={22} color="black" onPress={() => supabase.auth.signOut()} style={{ marginRight: 25 }}/>
+                    tabBarIcon: ({ size, color }) => <FontAwesome6 name="circle-user" size={size} color={color} />,
+                    headerRight: () => <AntDesign name="logout" size={22} color="black" onPress={() => {
+                        supabase.auth.signOut();
+                        client.disconnectUser();
                     }
+
+                    } style={{ marginRight: 25 }} />
+                }
                 }
             />
         </Tabs>

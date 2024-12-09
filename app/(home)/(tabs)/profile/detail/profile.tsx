@@ -74,18 +74,25 @@ export default function ProfileScreen() {
         }
     }, [id]);
 
+    function handleInterestMessageClicked(): void {
+        setEditing(false); // Stop editing when moving away from the page
+    }
+
     return (
 
         <SafeAreaView style={styles.container}>
             {/* <SafeAreaView> */}
             <ScrollView>
                 <ProfileTag
+                    fullName={full_name ? full_name.toString() : ""}
+                    username={username ? username.toString() : ""}
+                    avatarUrl={avatar_url ? avatar_url.toString() : ""}
                     editing={editing}
                 />
                 <Text style={[sizes.subtitle, styles.subtitle]}>
                     Bio
                 </Text>
-                <Bio editing={editing} />
+                <Bio bio={bio ? bio.toString() : ""} editing={editing} />
                 <Divider margin={spacing} />
                 <View style={styles.interests}>
                     <View style={styles.interestsLists}>
@@ -114,7 +121,7 @@ export default function ProfileScreen() {
                     </View>
                     {editing ? (
                         <View style={styles.newInterestMessage}>
-                            <FindNewInterestMessage />
+                            <FindNewInterestMessage onClick={handleInterestMessageClicked} />
                         </View>
                     ) : null}
                 </View>
@@ -126,8 +133,6 @@ export default function ProfileScreen() {
             <EditProfileButton
                 editing={editing}
                 setEditing={setEditing}
-                // onUpdate={() => updateProfile({ username, fullName, website, bio, avatarUrl })}
-                onUpdate={() => { }} // Update profile on button press (not currently using this, each component updates separately)
             />
         </SafeAreaView>
     );

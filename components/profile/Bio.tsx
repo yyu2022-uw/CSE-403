@@ -7,12 +7,13 @@ import { useAuth } from '@useAuth';
 import { supabase } from 'lib/supabase';
 
 interface BioProps {
+    bio: string
     editing: boolean;
 }
 
-export default function Bio({ editing }: BioProps) {
+export default function Bio({ bio, editing }: BioProps) {
     const auth = useAuth();
-    const [editableBioText, setEditableBioText] = useState(auth?.profile?.bio);
+    const [editableBioText, setEditableBioText] = useState(bio);
 
     // Watch for `editing` to change and trigger `updateProfile` when it becomes 0 (false)
     useEffect(() => {
@@ -48,7 +49,7 @@ export default function Bio({ editing }: BioProps) {
     if (!editing) {
         return (
             <View style={styles.container}>
-                <Text style={sizes.plainText}>{editableBioText}</Text>
+                <Text style={sizes.plainText}>{editableBioText || "Add a biography..."}</Text>
             </View>
         );
     } else {

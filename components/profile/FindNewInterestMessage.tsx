@@ -2,9 +2,14 @@ import { Alert, Pressable, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Redirect, router } from 'expo-router';
 
-const FindNewInterestMessage = () => {
+type EditProfileButtonProps = {
+    onClick: () => void;
+};
+
+const FindNewInterestMessage = ({ onClick }: EditProfileButtonProps) => {
     return (
         <Pressable onPress={() => {
+            onClick();
             router.replace('/communities');  // Use replace instead of push
         }} style={styles.container}>
             <View style={styles.innerContainer}>

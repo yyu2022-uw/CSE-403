@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, Button, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { Interest } from '@/data/interests';
@@ -7,8 +7,13 @@ import InterestsList from '@/components/profile/InterestsList';
 import { sizes } from '@Sizes';
 import { spacing } from '@Spacing';
 import Divider from '@/components/Divider';
+import { useAuth } from '@useAuth';
+import { StreamChat } from 'stream-chat';
+import { useChatContext } from 'stream-chat-expo';
 
 export default function MentorDetailScreen() { // Include navigation as prop
+  const auth = useAuth();
+  const { client } = useChatContext();
   const { id, username, full_name, avatar_url, bio } = useLocalSearchParams();
   const validAvatarUrl = Array.isArray(avatar_url) ? avatar_url[0] : avatar_url;
   const [mentorInterests, setMentorInterests] = useState<Interest[]>();
@@ -83,6 +88,32 @@ export default function MentorDetailScreen() { // Include navigation as prop
     }
   }, [id, full_name, navigation]); // Make sure full_name and navigation are included as dependencies
 
+  const handleConnectPress = async () => {
+    const profile = auth?.profile;
+
+    if (!profile || !id) {
+      console.error("User profile or mentor ID is missing.");
+      return;
+    }
+
+    const createChannel = async () => {
+      try {
+        // Replace `client` with the StreamChat instance from ChatProvider
+        const channel = client.channel('messaging', {
+          members: [profile.id, id], // Include current user ID and mentor's ID
+        })
+        await channel.watch();
+
+        // Optionally, navigate to the chat screen (if you have one)
+        // navigation.navigate('ChatScreen', { channelId: channel.id });
+      } catch (err) {
+        console.error("Failed to create or join channel:", err);
+      }
+    };
+
+    createChannel();
+  }
+
   if (loading) {
     return (
       <View style={styles.centered}>
@@ -133,7 +164,7 @@ export default function MentorDetailScreen() { // Include navigation as prop
 
       <Button
         title="Connect with Mentor"
-        // onPress={handleConnectPress}
+        onPress={handleConnectPress}
         color="#007BFF"
       />
     </ScrollView>

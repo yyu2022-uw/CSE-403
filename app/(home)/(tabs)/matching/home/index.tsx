@@ -2,19 +2,23 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { supabase } from "lib/supabase";
 import { useCallback, useEffect, useState } from "react";
+import { useAuth } from "@useAuth";
+import { ScrollView } from "react-native-gesture-handler";
 
-interface Profile {
-  id: string;
-  username: string;
-  full_name: string;
-  avatar_url: string;
-  bio: string;
-}
+// interface Profile {
+//   id: string;
+//   username: string;
+//   fullName: string;
+//   avatarUrl: string;
+//   bio: string;
+//   isMentor: boolean;
+// }
 
 export default function MentorCommunityScreen({ route }) {
+  const auth = useAuth();
   const { iid, name } = route.params;
   const router = useRouter();
-  const [mentors, setMentors] = useState<Profile[]>([]);
+  const [mentors, setMentors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useFocusEffect(
@@ -23,14 +27,14 @@ export default function MentorCommunityScreen({ route }) {
         try {
           let { data: communityMentors } = await supabase
             .from('user_interests')
-            .select('profiles (id, username, full_name, avatar_url, bio)')
+            .select('is_mentor, profiles (id, username, full_name, avatar_url, bio)')
             .eq('iid', iid)
-            .eq('is_mentor', true)
-            .limit(3);
+            .neq('uid', auth?.user?.id)
+            .limit(8);
 
           if (communityMentors) {
-            const mentors = communityMentors.flatMap((cm: { profiles: Profile[] }) => cm.profiles);
-            setMentors(mentors);
+            // console.log("communityMentors", communityMentors);
+            setMentors(communityMentors); // Set mentors with updated profiles
           }
           setLoading(false);
 
@@ -59,35 +63,60 @@ export default function MentorCommunityScreen({ route }) {
     );
   }
 
+  function MentorText() {
+    return (
+      <Text style={{ color: 'black' }}>Mentor</Text>
+    )
+  }
+
+  function MenteeText() {
+    return (
+      <Text style={{ color: 'purple' }}>Mentee</Text>
+    )
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Recommended Matches For The {name} Community</Text>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scrollContent} // Apply styles to the content
+    >
+      <Text style={styles.title}>Recommended Connections For The {name} Community</Text>
       {mentors.map((mentor, index) => (
         <TouchableOpacity key={index} style={styles.card} onPress={() => {
           router.push(
-            `/(home)/(tabs)/matching/detail/matchDetail?id=${mentor.id}&username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
+            `/(home)/(tabs)/matching/detail/matchDetail?id=${mentor.profiles.id}&username=${mentor.profiles.username}&full_name=${mentor.profiles.full_name}&avatar_url=${mentor.profiles.avatar_url}&bio=${mentor.profiles.bio}`
           )
         }}>
-          <Text style={styles.mentorName}>{mentor.full_name}</Text>
+          <View style={styles.nameAndType}>
+            <Text style={styles.mentorName}>{mentor.profiles.full_name}</Text>
+            <Text style={styles.type}>{
+              mentor.is_mentor === 'true' || mentor.is_mentor === true ?
+                <MentorText /> :
+                <MenteeText />
+            }
+            </Text>
+          </View>
         </TouchableOpacity>
       ))}
       <TouchableOpacity
         style={styles.button}
         onPress={() => { router.push(`/(home)/(tabs)/matching/detail/match?iid=${iid}`) }}
       >
-        <Text style={styles.buttonText}>Click To Be Matched With A Mentor</Text>
+        <Text style={styles.buttonText}>Random Match</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#f4f4f4',
     padding: 20,
+  },
+  scrollContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   centered: {
     flex: 1,
@@ -113,14 +142,16 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    marginTop: 56,
     color: '#333',
   },
   button: {
     backgroundColor: '#6200ea',
     paddingVertical: 20,
     paddingHorizontal: 30,
-    borderRadius: 10,
+    borderRadius: 16,
     alignItems: 'center',
+    marginTop: 40,
   },
   buttonText: {
     color: '#fff',
@@ -131,5 +162,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginVertical: 5,
     fontWeight: 'bold',
+  },
+  nameAndType: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  type: {
+    fontSize: 12,
+    marginVertical: 8,
+    // fontWeight: 'bold',
+    alignItems: 'center',
   },
 });
