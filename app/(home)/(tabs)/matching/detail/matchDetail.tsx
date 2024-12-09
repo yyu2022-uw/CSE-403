@@ -7,6 +7,8 @@ import InterestsList from '@/components/profile/InterestsList';
 import { sizes } from '@Sizes';
 import { spacing } from '@Spacing';
 import Divider from '@/components/Divider';
+import ConnectWithMentorButton from '@/components/matching/ConnectWithMentorButton';
+import { panHandlerName } from 'react-native-gesture-handler/lib/typescript/handlers/PanGestureHandler';
 
 export default function MentorDetailScreen() { // Include navigation as prop
   const { id, username, full_name, avatar_url, bio } = useLocalSearchParams();
@@ -92,51 +94,52 @@ export default function MentorDetailScreen() { // Include navigation as prop
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.profileContainer}>
-        <View>
-          {validAvatarUrl !== 'null' ? (
-            <Image
-              source={{ uri: validAvatarUrl }}
-              accessibilityLabel="Avatar"
-              style={[styles.avatar, styles.image]}
-            />
-          ) : (
-            <View style={[styles.avatar, styles.noImage]} />
-          )}
-        </View>
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.profileContainer}>
+          <View>
+            {validAvatarUrl !== 'null' ? (
+              <Image
+                source={{ uri: validAvatarUrl }}
+                accessibilityLabel="Avatar"
+                style={[styles.avatar, styles.image]}
+              />
+            ) : (
+              <View style={[styles.avatar, styles.noImage]} />
+            )}
+          </View>
 
-        <Text style={styles.fullName}>{full_name}</Text>
-        <Text style={styles.username}>@{username}</Text>
-      </View>
-      <View style={styles.detailsContainer}>
-        <Text style={[sizes.subtitle, styles.bio]}>Bio</Text>
-        <Text style={styles.bioText}>{bio}</Text>
-        <Divider margin={spacing} />
-        <View style={styles.interests}>
-          <View style={styles.interestsLists}>
-            <View>
-              <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
-                Mentoring
-              </Text>
-              <InterestsList interests={mentorInterests} onUpdate={() => { }} />
-            </View>
-            <View>
-              <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
-                Menteeing
-              </Text>
-              <InterestsList interests={menteeInterests} onUpdate={() => { }} />
+          <Text style={styles.fullName}>{full_name}</Text>
+          <Text style={styles.username}>@{username}</Text>
+        </View>
+        <View style={styles.detailsContainer}>
+          <Text style={[sizes.subtitle, styles.bio]}>Bio</Text>
+          <Text style={styles.bioText}>{bio}</Text>
+          <Divider margin={spacing} />
+          <View style={styles.interests}>
+            <View style={styles.interestsLists}>
+              <View>
+                <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
+                  Mentoring
+                </Text>
+                <InterestsList interests={mentorInterests} onUpdate={() => { }} />
+              </View>
+              <View>
+                <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
+                  Menteeing
+                </Text>
+                <InterestsList interests={menteeInterests} onUpdate={() => { }} />
+              </View>
             </View>
           </View>
         </View>
-      </View>
 
-      <Button
-        title="Connect with Mentor"
-        // onPress={handleConnectPress}
-        color="#007BFF"
+      </ScrollView>
+      <ConnectWithMentorButton
+        onClick={() => { }}
+      // onClick={handleConnectPress}
       />
-    </ScrollView>
+    </View>
   );
 }
 
