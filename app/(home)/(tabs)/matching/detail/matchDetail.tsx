@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, Button, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { Interest } from '@/data/interests';
@@ -7,10 +7,13 @@ import InterestsList from '@/components/profile/InterestsList';
 import { sizes } from '@Sizes';
 import { spacing } from '@Spacing';
 import Divider from '@/components/Divider';
-import ConnectWithMentorButton from '@/components/matching/ConnectWithMentorButton';
-import { panHandlerName } from 'react-native-gesture-handler/lib/typescript/handlers/PanGestureHandler';
+import { useAuth } from '@useAuth';
+import { StreamChat } from 'stream-chat';
+import { useChatContext } from 'stream-chat-expo';
 
 export default function MentorDetailScreen() { // Include navigation as prop
+  const auth = useAuth();
+  const { client } = useChatContext();
   const { id, username, full_name, avatar_url, bio } = useLocalSearchParams();
   const validAvatarUrl = Array.isArray(avatar_url) ? avatar_url[0] : avatar_url;
   const [mentorInterests, setMentorInterests] = useState<Interest[]>();
@@ -85,6 +88,32 @@ export default function MentorDetailScreen() { // Include navigation as prop
     }
   }, [id, full_name, navigation]); // Make sure full_name and navigation are included as dependencies
 
+  const handleConnectPress = async () => {
+    const profile = auth?.profile;
+
+    if (!profile || !id) {
+      console.error("User profile or mentor ID is missing.");
+      return;
+    }
+
+    const createChannel = async () => {
+      try {
+        // Replace `client` with the StreamChat instance from ChatProvider
+        const channel = client.channel('messaging', {
+          members: [profile.id, id], // Include current user ID and mentor's ID
+        })
+        await channel.watch();
+
+        // Optionally, navigate to the chat screen (if you have one)
+        // navigation.navigate('ChatScreen', { channelId: channel.id });
+      } catch (err) {
+        console.error("Failed to create or join channel:", err);
+      }
+    };
+
+    createChannel();
+  }
+
   if (loading) {
     return (
       <View style={styles.centered}>
@@ -94,52 +123,51 @@ export default function MentorDetailScreen() { // Include navigation as prop
   }
 
   return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.profileContainer}>
-          <View>
-            {validAvatarUrl !== 'null' ? (
-              <Image
-                source={{ uri: validAvatarUrl }}
-                accessibilityLabel="Avatar"
-                style={[styles.avatar, styles.image]}
-              />
-            ) : (
-              <View style={[styles.avatar, styles.noImage]} />
-            )}
-          </View>
-
-          <Text style={styles.fullName}>{full_name}</Text>
-          <Text style={styles.username}>@{username}</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.profileContainer}>
+        <View>
+          {validAvatarUrl !== 'null' ? (
+            <Image
+              source={{ uri: validAvatarUrl }}
+              accessibilityLabel="Avatar"
+              style={[styles.avatar, styles.image]}
+            />
+          ) : (
+            <View style={[styles.avatar, styles.noImage]} />
+          )}
         </View>
-        <View style={styles.detailsContainer}>
-          <Text style={[sizes.subtitle, styles.bio]}>Bio</Text>
-          <Text style={styles.bioText}>{bio}</Text>
-          <Divider margin={spacing} />
-          <View style={styles.interests}>
-            <View style={styles.interestsLists}>
-              <View>
-                <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
-                  Mentoring
-                </Text>
-                <InterestsList interests={mentorInterests} onUpdate={() => { }} />
-              </View>
-              <View>
-                <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
-                  Menteeing
-                </Text>
-                <InterestsList interests={menteeInterests} onUpdate={() => { }} />
-              </View>
+
+        <Text style={styles.fullName}>{full_name}</Text>
+        <Text style={styles.username}>@{username}</Text>
+      </View>
+      <View style={styles.detailsContainer}>
+        <Text style={[sizes.subtitle, styles.bio]}>Bio</Text>
+        <Text style={styles.bioText}>{bio}</Text>
+        <Divider margin={spacing} />
+        <View style={styles.interests}>
+          <View style={styles.interestsLists}>
+            <View>
+              <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
+                Mentoring
+              </Text>
+              <InterestsList interests={mentorInterests} onUpdate={() => { }} />
+            </View>
+            <View>
+              <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
+                Menteeing
+              </Text>
+              <InterestsList interests={menteeInterests} onUpdate={() => { }} />
             </View>
           </View>
         </View>
+      </View>
 
-      </ScrollView>
-      <ConnectWithMentorButton
-        onClick={() => { }}
-      // onClick={handleConnectPress} // Uncomment this when implemented
+      <Button
+        title="Connect with Mentor"
+        onPress={handleConnectPress}
+        color="#007BFF"
       />
-    </View>
+    </ScrollView>
   );
 }
 
@@ -165,12 +193,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   fullName: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
   },
   username: {
-    fontSize: 20,
+    fontSize: 16,
     color: '#555',
     marginBottom: 8,
   },
@@ -178,7 +206,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
     padding: 16,
-    paddingTop: 22,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -192,7 +219,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   bioText: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#555',
     lineHeight: 24,
     paddingLeft: spacing / 4,
@@ -217,7 +244,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing,
   },
   interestsLists: {
-    width: 320,
+    width: 350,
     paddingTop: spacing / 2,
     flex: 2,
     margin: 'auto',
