@@ -9,14 +9,17 @@ import { Colors } from '@Colors';
 import { supabase } from 'lib/supabase';
 
 interface ProfileTagProps {
+    fullName: string;
+    username: string;
+    avatarUrl: string;
     editing: boolean;
 }
 
-const ProfileTag: React.FC<ProfileTagProps> = ({ editing }) => {
+const ProfileTag: React.FC<ProfileTagProps> = ({ fullName, username, avatarUrl, editing }) => {
     const auth = useAuth();
-    const [editableName, setEditableName] = useState(auth?.profile?.full_name);
-    const [selectedImage, setSelectedImage] = useState(auth?.profile?.avatar_url);
-    const [editableUsername, setEditableUsername] = useState(auth?.profile?.username);
+    const [editableName, setEditableName] = useState(fullName);
+    const [editableUsername, setEditableUsername] = useState(username);
+    const [selectedImage, setSelectedImage] = useState(avatarUrl);
 
     // Watch for `editing` to change and trigger `updateProfile` when it becomes 0 (false)
     useEffect(() => {
