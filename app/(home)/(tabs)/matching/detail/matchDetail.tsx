@@ -165,12 +165,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   fullName: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#333',
   },
   username: {
-    fontSize: 16,
+    fontSize: 20,
     color: '#555',
     marginBottom: 8,
   },
@@ -178,6 +178,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
     padding: 16,
+    paddingTop: 22,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   bioText: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#555',
     lineHeight: 24,
     paddingLeft: spacing / 4,
@@ -216,7 +217,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing,
   },
   interestsLists: {
-    width: 350,
+    width: 320,
     paddingTop: spacing / 2,
     flex: 2,
     margin: 'auto',
