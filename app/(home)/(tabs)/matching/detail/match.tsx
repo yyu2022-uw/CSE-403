@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { supabase } from 'lib/supabase';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Interest } from '@/data/interests';
 import { useAuth } from '@useAuth';
 
@@ -11,6 +11,16 @@ export default function MatchingScreen() {
   const [match, setMatch] = useState<{ id: string; username: string; full_name: string; avatar_url: string; bio: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [isMentor, setIsMentor] = useState(false);
+
+  const navigation = useNavigation();
+
+  // Set the screen title name to "Random Match Results"
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Random Match Results',
+    });
+  }, [navigation]);
+
 
   useEffect(() => {
     const fetchIsMentor = async () => {
@@ -97,7 +107,7 @@ export default function MatchingScreen() {
           </Text>
         </TouchableOpacity>
       ) : (
-        <Text>No mentors available for this community.</Text>
+        <Text>No {!isMentor ? "mentors" : "mentees"} available for this community.</Text>
       )}
     </View>
   );
