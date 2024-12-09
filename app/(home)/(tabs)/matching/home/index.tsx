@@ -61,18 +61,12 @@ export default function MentorCommunityScreen({ route }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Recommended Mentors For The {name} Community</Text>
+      <Text style={styles.title}>Recommended Matches For The {name} Community</Text>
       {mentors.map((mentor, index) => (
         <TouchableOpacity key={index} style={styles.card} onPress={() => {
           router.push(
-            `/(home)/(tabs)/matching/detail/mentorDetail?id=${mentor.id}&username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
+            `/(home)/(tabs)/matching/detail/matchDetail?id=${mentor.id}&username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
           )
-          // router.back(
-          //   `/(home)/(tabs)/matching/detail/mentorDetail?id=${mentor.id}&username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
-          // )
-          // router.push(
-          //   `/mentorDetail?id=${mentor.id}&username=${mentor.username}&full_name=${mentor.full_name}&avatar_url=${mentor.avatar_url}&bio=${mentor.bio}`
-          // )
         }}>
           <Text style={styles.mentorName}>{mentor.full_name}</Text>
         </TouchableOpacity>
