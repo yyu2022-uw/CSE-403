@@ -75,7 +75,7 @@ export default function MentorCommunityScreen({ route }) {
         style={styles.button}
         onPress={() => { router.push(`/(home)/(tabs)/matching/detail/match?iid=${iid}`) }}
       >
-        <Text style={styles.buttonText}>Click To Be Matched With A Mentor</Text>
+        <Text style={styles.buttonText}>Random Match</Text>
       </TouchableOpacity>
     </View>
   );
@@ -119,8 +119,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#6200ea',
     paddingVertical: 20,
     paddingHorizontal: 30,
-    borderRadius: 10,
+    borderRadius: 16,
     alignItems: 'center',
+    marginTop: 40
   },
   buttonText: {
     color: '#fff',

@@ -137,7 +137,7 @@ export default function MentorDetailScreen() { // Include navigation as prop
       </ScrollView>
       <ConnectWithMentorButton
         onClick={() => { }}
-      // onClick={handleConnectPress}
+      // onClick={handleConnectPress} // Uncomment this when implemented
       />
     </View>
   );
