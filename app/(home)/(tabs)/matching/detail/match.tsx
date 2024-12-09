@@ -97,7 +97,7 @@ export default function MatchingScreen() {
           }
         >
           <Text style={{ color: 'blue', textDecorationLine: 'underline' }}>
-            Mentor Matched: {match.full_name}
+            Match Found: {match.full_name}
           </Text>
         </TouchableOpacity>
       ) : (
