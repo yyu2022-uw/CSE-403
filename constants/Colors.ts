@@ -15,10 +15,14 @@ export const Colors = {
     placeholderText: 'gray',
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
-    button: '#caf0fc',
-    buttonText: '#0d8cb5',
-    buttonSave: '#687076',
-    buttonSaveText: '#ffffff',
+    button_blue: '#caf0fc',
+    buttonText_blue: '#0d8cb5',
+    button_gray: '#687076',
+    buttonText_gray: '#ffffff',
+    button_purple: '#e6d9f7',
+    buttonText_purple: '#8b5bb1',
+    button_purple_dark: '#c5a6e1', // Muted, darker purple
+    buttonText_purple_dark: '#6f4795', // Deeper shade for text, still readable  
   },
   dark: {
     text: '#ECEDEE',

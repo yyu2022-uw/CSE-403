@@ -5,8 +5,8 @@ import { spacing } from '@Spacing';
 import { sizes } from '@Sizes';
 import { Ionicons } from '@expo/vector-icons'; // Import the Ionicons
 
-let buttonColor = Colors.light.button;
-let buttonTextColor = Colors.light.buttonText;
+let buttonColor = Colors.light.button_blue;
+let buttonTextColor = Colors.light.buttonText_blue;
 
 type EditProfileButtonProps = {
     editing: boolean;
@@ -16,8 +16,8 @@ type EditProfileButtonProps = {
 
 const EditProfileButton: React.FC<EditProfileButtonProps> = ({ editing, setEditing, onUpdate }) => {
 
-    const buttonColor = !editing ? Colors.light.button : Colors.light.buttonSave;
-    const buttonTextColor = !editing ? Colors.light.buttonText : Colors.light.buttonSaveText;
+    const buttonColor = !editing ? Colors.light.button_blue : Colors.light.button_gray;
+    const buttonTextColor = !editing ? Colors.light.buttonText_blue : Colors.light.buttonText_gray;
     const buttonText = !editing ? 'Edit Profile' : 'Save Edits';
     const buttonIcon = !editing ? 'pencil' : 'save';
 
