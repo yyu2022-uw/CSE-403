@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { useCallback, useState } from 'react';
+import { View, ActivityIndicator } from 'react-native';
 import { supabase } from 'lib/supabase';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import MentorCommunityScreen from '.';

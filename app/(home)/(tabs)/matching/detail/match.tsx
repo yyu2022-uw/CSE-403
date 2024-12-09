@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Text, View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { supabase } from 'lib/supabase';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
-import { Interest } from '@/data/interests';
 import { useAuth } from '@useAuth';
 
 export default function MatchingScreen() {
@@ -17,7 +16,7 @@ export default function MatchingScreen() {
   // Set the screen title name to "Random Match Results"
   useEffect(() => {
     navigation.setOptions({
-      title: 'Random Match Results',
+      title: 'Results',
     });
   }, [navigation]);
 

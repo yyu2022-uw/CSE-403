@@ -1,12 +1,9 @@
-import { Redirect, Tabs } from "expo-router";
+import { Tabs } from "expo-router";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { AuthProvider } from "@useAuth";
 import { supabase } from "lib/supabase";
-import AppScreen from "app";
-import { useState } from "react";
-import { StyleSheet } from "react-native";
 import { StreamChat } from 'stream-chat';
 
 const client = StreamChat.getInstance(process.env.EXPO_PUBLIC_STREAM_API_KEY!);

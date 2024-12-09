@@ -1,5 +1,5 @@
-import React, { createContext, useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, Button, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Interest } from '@/data/interests';
 import { supabase } from 'lib/supabase';
@@ -8,7 +8,6 @@ import { sizes } from '@Sizes';
 import { spacing } from '@Spacing';
 import Divider from '@/components/Divider';
 import { useAuth } from '@useAuth';
-import { StreamChat } from 'stream-chat';
 import { useChatContext } from 'stream-chat-expo';
 import ConnectWithMatchButton from '@/components/matching/ConnectWithMatchButton';
 

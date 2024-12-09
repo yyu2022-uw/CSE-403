@@ -1,7 +1,7 @@
 import { useFocusEffect, useRouter } from "expo-router";
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { supabase } from "lib/supabase";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useAuth } from "@useAuth";
 import { ScrollView } from "react-native-gesture-handler";
 
