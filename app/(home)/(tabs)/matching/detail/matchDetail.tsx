@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, Button, ActivityIndicator } from 'react-native';
-import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Interest } from '@/data/interests';
 import { supabase } from 'lib/supabase';
 import InterestsList from '@/components/profile/InterestsList';
@@ -10,6 +10,7 @@ import Divider from '@/components/Divider';
 import { useAuth } from '@useAuth';
 import { StreamChat } from 'stream-chat';
 import { useChatContext } from 'stream-chat-expo';
+import ConnectWithMatchButton from '@/components/matching/ConnectWithMatchButton';
 
 export default function MentorDetailScreen() { // Include navigation as prop
   const auth = useAuth();
@@ -104,8 +105,8 @@ export default function MentorDetailScreen() { // Include navigation as prop
         })
         await channel.watch();
 
-        // Optionally, navigate to the chat screen (if you have one)
-        // navigation.navigate('ChatScreen', { channelId: channel.id });
+        // Navigate to the chat screen
+        router.push('/(home)/(tabs)/')
       } catch (err) {
         console.error("Failed to create or join channel:", err);
       }
@@ -123,58 +124,63 @@ export default function MentorDetailScreen() { // Include navigation as prop
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.profileContainer}>
-        <View>
-          {validAvatarUrl !== 'null' ? (
-            <Image
-              source={{ uri: validAvatarUrl }}
-              accessibilityLabel="Avatar"
-              style={[styles.avatar, styles.image]}
-            />
-          ) : (
-            <View style={[styles.avatar, styles.noImage]} />
-          )}
-        </View>
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.profileContainer}>
+          <View>
+            {validAvatarUrl !== 'null' ? (
+              <Image
+                source={{ uri: validAvatarUrl }}
+                accessibilityLabel="Avatar"
+                style={[styles.avatar, styles.image]}
+              />
+            ) : (
+              <View style={[styles.avatar, styles.noImage]} />
+            )}
+          </View>
 
-        <Text style={styles.fullName}>{full_name}</Text>
-        <Text style={styles.username}>@{username}</Text>
-      </View>
-      <View style={styles.detailsContainer}>
-        <Text style={[sizes.subtitle, styles.bio]}>Bio</Text>
-        <Text style={styles.bioText}>{bio}</Text>
-        <Divider margin={spacing} />
-        <View style={styles.interests}>
-          <View style={styles.interestsLists}>
-            <View>
-              <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
-                Mentoring
-              </Text>
-              <InterestsList interests={mentorInterests} onUpdate={() => { }} />
-            </View>
-            <View>
-              <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
-                Menteeing
-              </Text>
-              <InterestsList interests={menteeInterests} onUpdate={() => { }} />
+          <Text style={styles.fullName}>{full_name}</Text>
+          <Text style={styles.username}>@{username}</Text>
+        </View>
+        <View style={styles.detailsContainer}>
+          <Text style={[sizes.subtitle, styles.bio]}>Bio</Text>
+          <Text style={styles.bioText}>{bio}</Text>
+          <Divider margin={spacing} />
+          <View style={styles.interests}>
+            <View style={styles.interestsLists}>
+              <View>
+                <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
+                  Mentoring
+                </Text>
+                <InterestsList interests={mentorInterests} onUpdate={() => { }} />
+              </View>
+              <View>
+                <Text style={[sizes.mentorMenteeTitle, styles.mentorMentee]}>
+                  Menteeing
+                </Text>
+                <InterestsList interests={menteeInterests} onUpdate={() => { }} />
+              </View>
             </View>
           </View>
         </View>
-      </View>
-
-      <Button
-        title="Connect with Mentor"
-        onPress={handleConnectPress}
-        color="#007BFF"
+      </ScrollView>
+      <ConnectWithMatchButton
+        onClick={handleConnectPress}
       />
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 16,
+    paddingTop: 32,
+    paddingLeft: 24,
+    paddingRight: 24,
+    backgroundColor: '#f8f9fa',
+  },
+  scrollView: {
+    marginBottom: 16,
     backgroundColor: '#f8f9fa',
   },
   centered: {
@@ -190,15 +196,15 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    marginBottom: 16,
+    margin: 16,
   },
   fullName: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#333',
   },
   username: {
-    fontSize: 16,
+    fontSize: 20,
     color: '#555',
     marginBottom: 8,
   },
@@ -206,6 +212,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
     padding: 16,
+    paddingTop: 24,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -219,7 +226,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   bioText: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#555',
     lineHeight: 24,
     paddingLeft: spacing / 4,
@@ -244,7 +251,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing,
   },
   interestsLists: {
-    width: 350,
+    width: 320,
     paddingTop: spacing / 2,
     flex: 2,
     margin: 'auto',

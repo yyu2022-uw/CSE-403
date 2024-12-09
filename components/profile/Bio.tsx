@@ -49,7 +49,7 @@ export default function Bio({ bio, editing }: BioProps) {
     if (!editing) {
         return (
             <View style={styles.container}>
-                <Text style={sizes.plainText}>{editableBioText || "Add a biography..."}</Text>
+                <Text style={sizes.plainText}>{editableBioText}</Text>
             </View>
         );
     } else {
@@ -57,7 +57,7 @@ export default function Bio({ bio, editing }: BioProps) {
             <View style={styles.container}>
                 <TextInput
                     style={[sizes.plainText, styles.input]}
-                    value={editableBioText}
+                    value={editableBioText || "Add a biography..."}
                     onChangeText={setEditableBioText}
                     placeholder="Write your biography..."
                     placeholderTextColor={Colors.light.placeholderText}

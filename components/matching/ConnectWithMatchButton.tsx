@@ -5,11 +5,11 @@ import { spacing } from '@Spacing';
 import { sizes } from '@Sizes';
 import { Ionicons } from '@expo/vector-icons'; // Import the Ionicons
 
-type ConnectWithMentorButtonProps = {
+type ConnectWithMatchButtonProps = {
   onClick: () => void;
 };
 
-const ConnectWithMentorButton: React.FC<ConnectWithMentorButtonProps> = ({ onClick }) => {
+const ConnectWithMatchButton: React.FC<ConnectWithMatchButtonProps> = ({ onClick }) => {
   const [isPressed, setIsPressed] = useState(false);
 
   const buttonColor = isPressed ? Colors.light.button_purple_dark : Colors.light.button_purple;
@@ -33,11 +33,11 @@ const ConnectWithMentorButton: React.FC<ConnectWithMentorButtonProps> = ({ onCli
   );
 };
 
-export default ConnectWithMentorButton;
+export default ConnectWithMatchButton;
 
 const styles = StyleSheet.create({
   container: {
-    width: "90%",
+    width: "80%",
     height: 48,
     borderRadius: 50,
     marginBottom: spacing,
