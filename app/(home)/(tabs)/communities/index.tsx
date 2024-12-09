@@ -49,7 +49,7 @@ function EditCommunities() {
         const filteredInterests = updatedInterests.filter((interest) => interest.joined);
 
         if (filteredInterests.length === 0) {
-            console.warn("No interests with 'joined' status set to true.");
+            // console.warn("No interests with 'joined' status set to true."); // testing
         }
 
         // Insert new records
