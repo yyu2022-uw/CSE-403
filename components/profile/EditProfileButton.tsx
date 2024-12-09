@@ -11,10 +11,9 @@ let buttonTextColor = Colors.light.buttonText_blue;
 type EditProfileButtonProps = {
     editing: boolean;
     setEditing: (editing: boolean) => void;
-    onUpdate: () => void;
 };
 
-const EditProfileButton: React.FC<EditProfileButtonProps> = ({ editing, setEditing, onUpdate }) => {
+const EditProfileButton: React.FC<EditProfileButtonProps> = ({ editing, setEditing }) => {
 
     const buttonColor = !editing ? Colors.light.button_blue : Colors.light.button_gray;
     const buttonTextColor = !editing ? Colors.light.buttonText_blue : Colors.light.buttonText_gray;
@@ -24,9 +23,6 @@ const EditProfileButton: React.FC<EditProfileButtonProps> = ({ editing, setEditi
     return (
         <Pressable
             onPress={() => {
-                if (editing) {
-                    onUpdate(); // Call the update function if in editing mode
-                }
                 setEditing(!editing)
             }}
             style={[styles.container, { backgroundColor: buttonColor }]}>
