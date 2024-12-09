@@ -4,9 +4,6 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { AuthProvider } from "@useAuth";
 import { supabase } from "lib/supabase";
-import AppScreen from "app";
-import { useState } from "react";
-import { StyleSheet } from "react-native";
 
 
 export default function TabNavigator() {
