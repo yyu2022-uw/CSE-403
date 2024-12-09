@@ -69,7 +69,11 @@ const ProfileTag: React.FC<ProfileTagProps> = ({ fullName, username, avatarUrl, 
         const { data, error } = await supabase
             .from('profiles')
             .update([
-                { avatar_url: avatarUrl, full_name: fullName, username },
+                {
+                    avatar_url: avatarUrl || "Placeholder Image",
+                    full_name: fullName || "Your Name",
+                    username: username || "Your Username",
+                },
             ])
             .eq('id', auth?.session?.user.id)
             .select();

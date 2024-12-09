@@ -37,7 +37,7 @@ export default function Bio({ bio, editing }: BioProps) {
         const { data, error } = await supabase
             .from('profiles')
             .update([
-                { bio },
+                { bio: bio || "Add a biography..." },
             ])
             .eq('id', auth?.session?.user.id)
             .select();
