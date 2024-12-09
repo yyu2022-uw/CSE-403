@@ -8,6 +8,7 @@ export default function Auth() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
+    const router = useRouter()
 
     async function signInWithEmail() {
         setLoading(true)
@@ -32,8 +33,8 @@ export default function Auth() {
 
         if (error) Alert.alert(error.message)
         setLoading(false)
-
-        useRouter().push("/(auth)/(setup)");
+        
+        router.navigate('/(auth)/(setup)')
     }
 
     return (
@@ -63,7 +64,7 @@ export default function Auth() {
                 <Button title="Sign in" disabled={loading} onPress={() => signInWithEmail()} />
             </View>
             <View style={styles.verticallySpaced}>
-                <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
+                <Button title="Sign up" disabled={loading} onPress={() => router.navigate('/(auth)/(setup)')} />
             </View>
         </View>
     )

@@ -1,30 +1,30 @@
 import { useAuth } from "@useAuth";
-import { Redirect } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import { supabase } from "lib/supabase";
 import React, { useState } from "react";
-import { View, TextInput, Text, Button, StyleSheet } from "react-native";
+import { View, TextInput, Text, Button, StyleSheet, Alert } from "react-native";
 
 export default function SignUpScreen() {
   const [username, setUsername] = useState("");
   const [fullname, setFullname] = useState("");
   const [bio, setBio] = useState("");
   const id = useAuth()?.user?.id;
+  const router = useRouter();
 
   async function setProfile() {
     // Validate inputs
+    if (!username?.trim()) {
+      Alert.alert('Invalid Input', 'Username cannot be empty.')
+      return;
+    }
+    
     if (!fullname?.trim()) {
-      console.error("Name cannot be empty.");
+      Alert.alert('Invalid Input', 'Full name cannot be empty.')
       return;
     }
 
     if (!bio?.trim()) {
-      console.error("Bio cannot be empty.");
-      return;
-    }
-
-    if (!username?.trim()) {
-      console.error("Username cannot be empty.");
-      return;
+      setBio("Hello!")
     }
 
     try {
@@ -34,7 +34,7 @@ export default function SignUpScreen() {
         .update({ full_name: fullname.trim(), bio: bio.trim(), username: username.trim() })
         .eq('id', id);
 
-      return <Redirect href="/(home)"/>
+      router.navigate("/(home)")
 
     } catch (err) {
       console.error("Error updating profile:", err);

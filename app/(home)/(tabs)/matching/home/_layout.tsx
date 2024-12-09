@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator, Alert } from 'react-native';
 import { supabase } from 'lib/supabase';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import { useNavigation } from '@react-navigation/native';
 import MentorCommunityScreen from '.';
 import { useAuth } from '@useAuth';
 import { Redirect, useFocusEffect } from 'expo-router';
