@@ -32,8 +32,6 @@ export default function Auth() {
 
         if (error) Alert.alert(error.message)
         setLoading(false)
-
-        useRouter().push("/(auth)/(setup)");
     }
 
     return (
