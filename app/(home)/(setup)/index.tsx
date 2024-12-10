@@ -34,7 +34,7 @@ export default function SignUpScreen() {
       }
 
       if (existingUser && existingUser.id !== id) {
-        Alert.alert("Warning", "Username already taken.");
+        Alert.alert("Error", "Username already taken.");
         // console.error("Error: Username already taken.");
         return;
       }
