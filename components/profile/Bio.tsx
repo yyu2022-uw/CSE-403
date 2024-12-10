@@ -42,6 +42,7 @@ export default function Bio({ bio, editing }: BioProps) {
             .eq('id', auth?.session?.user.id)
             .select();
 
+        setEditableBioText(bio);
         if (error) console.error(error);
         else console.log("Profile updated successfully:", data);
     };
@@ -49,7 +50,7 @@ export default function Bio({ bio, editing }: BioProps) {
     if (!editing) {
         return (
             <View style={styles.container}>
-                <Text style={sizes.plainText}>{editableBioText}</Text>
+                <Text style={sizes.plainText}>{editableBioText || "Add a biography..."}</Text>
             </View>
         );
     } else {
@@ -57,7 +58,7 @@ export default function Bio({ bio, editing }: BioProps) {
             <View style={styles.container}>
                 <TextInput
                     style={[sizes.plainText, styles.input]}
-                    value={editableBioText || "Add a biography..."}
+                    value={editableBioText}
                     onChangeText={setEditableBioText}
                     placeholder="Write your biography..."
                     placeholderTextColor={Colors.light.placeholderText}

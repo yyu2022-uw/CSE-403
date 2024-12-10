@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, Pressable, Alert } from 'react-native';
+import { StyleSheet, Text, View, Image, Pressable, Alert, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';  // Import the image picker
 import { spacing } from '@Spacing';
 import { sizes } from '@Sizes';
@@ -8,6 +8,7 @@ import { useAuth } from 'providers/AuthProvider';
 import { Colors } from '@Colors';
 import { supabase } from 'lib/supabase';
 import { shouldUseActivityState } from 'react-native-screens';
+import { AnswerListAddCommentButton } from 'stream-chat-expo';
 
 interface ProfileTagProps {
     fullName: string;
@@ -18,9 +19,12 @@ interface ProfileTagProps {
 
 const ProfileTag: React.FC<ProfileTagProps> = ({ fullName, username, avatarUrl, editing }) => {
     const auth = useAuth();
+    const [lastValidName, setLastValidName] = useState(fullName);
+    const [lastValidUsername, setLastValidUsername] = useState(username);
     const [editableName, setEditableName] = useState(fullName);
     const [editableUsername, setEditableUsername] = useState(username);
     const [selectedImage, setSelectedImage] = useState(avatarUrl);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         if (!editing) {
@@ -65,19 +69,22 @@ const ProfileTag: React.FC<ProfileTagProps> = ({ fullName, username, avatarUrl, 
         avatarUrl: string;
         username: string;
     }) => {
+        setLoading(true);
         if (!auth?.session?.user?.id) {
             Alert.alert("Error", "User ID is undefined. Cannot update profile.");
             console.error("User ID is undefined. Cannot update profile.");
+            setLoading(false);
             return;
         }
 
         // Validate inputs
         if (!fullName.trim() || !username.trim()) {
-            Alert.alert("Warning", "All fields must be filled.");
-            // console.error("Validation Error: All fields must be filled.");
-            setEditableName(fullName);
-            setEditableUsername(username);
-            setSelectedImage(avatarUrl);
+            // Restore previous values for invalid input
+            setEditableName(lastValidName);
+            setEditableUsername(lastValidUsername);
+            Alert.alert("Warning", "Name and username fields must be filled.");
+            // console.error("Validation Error: Name and username fields must be filled.");
+            setLoading(false);
             return;
         }
 
@@ -94,11 +101,10 @@ const ProfileTag: React.FC<ProfileTagProps> = ({ fullName, username, avatarUrl, 
             }
 
             if (existingUser && existingUser.id !== auth?.session?.user.id) {
+                setEditableUsername(lastValidUsername);
                 Alert.alert("Error", "Username already taken.");
                 // console.error("Error: Username already taken.");
-                setEditableName(fullName);
-                setEditableUsername(username);
-                setSelectedImage(avatarUrl);
+                setLoading(false);
                 return;
             }
 
@@ -122,51 +128,62 @@ const ProfileTag: React.FC<ProfileTagProps> = ({ fullName, username, avatarUrl, 
             if (!data || data.length === 0) {
                 Alert.alert("Error", "Failed to update profile. Please try again.");
                 console.error("Error: Profile update returned no data.");
+                setLoading(false);
                 return;
             }
 
+            setLastValidName(editableName);
+            setLastValidUsername(editableUsername);
             console.log("Profile updated successfully:", data);
         } catch (error) {
             // Alert.alert("Error", `Unexpected error: ${error}`);
             console.error("Unexpected error:", error);
+        } finally {
+            setLoading(false);
         }
     };
-
     return (
         <View style={styles.container}>
             <Pressable onPress={editing ? saveImage : undefined}>
                 <Image source={{ uri: avatarUrl }} style={styles.profilePicture} />
             </Pressable>
             <View style={styles.fullNameAndUsername}>
-                {editing ? (
-                    <TextInput
-                        style={[sizes.title, styles.input]}
-                        value={editableName}
-                        onChangeText={setEditableName}
-                        placeholder="Edit Name"
-                        placeholderTextColor={Colors.light.placeholderText}
-                    />
+                {loading ? (
+                    <ActivityIndicator size="small" />
                 ) : (
-                    <Text style={[sizes.title, styles.input]}>
-                        {fullName || "Your Name"}
-                    </Text>
-                )}
-                {editing ? (
-                    <TextInput
-                        style={[sizes.plainText, styles.input]}
-                        value={editableUsername}
-                        onChangeText={setEditableUsername}
-                        placeholder="Edit username"
-                        placeholderTextColor={Colors.light.placeholderText}
-                    />
-                ) : (
-                    <Text style={[sizes.plainText, styles.input]}>
-                        {username || "Your Username"}
-                    </Text>
+                    <>
+                        {editing ? (
+                            <TextInput
+                                style={[sizes.title, styles.input]}
+                                value={editableName}
+                                onChangeText={setEditableName}
+                                placeholder="Edit Full Name"
+                                placeholderTextColor={Colors.light.placeholderText}
+                            />
+                        ) : (
+                            <Text style={[sizes.title, styles.input]}>
+                                {editableName || fullName}
+                            </Text>
+                        )}
+                        {editing ? (
+                            <TextInput
+                                style={[sizes.plainText, styles.input]}
+                                value={editableUsername}
+                                onChangeText={setEditableUsername}
+                                placeholder="Edit Username"
+                                placeholderTextColor={Colors.light.placeholderText}
+                            />
+                        ) : (
+                            <Text style={[sizes.plainText, styles.input]}>
+                                {editableUsername || username}
+                            </Text>
+                        )}
+                    </>
                 )}
             </View>
         </View>
     );
+
 };
 
 export default ProfileTag;

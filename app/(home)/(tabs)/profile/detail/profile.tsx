@@ -84,15 +84,15 @@ export default function ProfileScreen() {
             {/* <SafeAreaView> */}
             <ScrollView>
                 <ProfileTag
-                    fullName={full_name ? full_name.toString() : ""}
-                    username={username ? username.toString() : ""}
-                    avatarUrl={avatar_url ? avatar_url.toString() : ""}
+                    fullName={full_name?.toString()}
+                    username={username?.toString()}
+                    avatarUrl={avatar_url?.toString()}
                     editing={editing}
                 />
                 <Text style={[sizes.subtitle, styles.subtitle]}>
                     Bio
                 </Text>
-                <Bio bio={bio ? bio.toString() : ""} editing={editing} />
+                <Bio bio={bio?.toString()} editing={editing} />
                 <Divider margin={spacing} />
                 <View style={styles.interests}>
                     <View style={styles.interestsLists}>
