@@ -73,7 +73,7 @@ export default function SignUpScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Sign Up</Text>
+      <Text style={styles.heading}>Set Up Your Account</Text>
 
       <TextInput
         style={styles.input}

@@ -8,5 +8,14 @@ export default function AuthLayout() {
     return <Redirect href="/(home)" />;
   }
 
-  return <Stack />;
+  return (
+    <Stack>
+      <Stack.Screen
+        name="login"
+        options={{
+          title: "Welcome to InterConnect",
+        }}
+      />
+    </Stack>
+  );
 }
