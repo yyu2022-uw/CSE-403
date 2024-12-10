@@ -1,3 +1,4 @@
+import SetupSubmitButton from "@/components/setup/SetupSubmitButton";
 import { useAuth } from "@useAuth";
 import { Redirect } from "expo-router";
 import { supabase } from "lib/supabase";
@@ -73,31 +74,36 @@ export default function SignUpScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Set Up Your Account</Text>
+      <View style={styles.content}>
+        <Text style={styles.heading}>Set Up Your Account</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your username"
-        value={username}
-        onChangeText={setUsername}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your username"
+          value={username}
+          onChangeText={setUsername}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your name"
-        value={fullName}
-        onChangeText={setFullName}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your name"
+          value={fullName}
+          onChangeText={setFullName}
+        />
 
-      <TextInput
-        style={[styles.input, { height: 100 }]}
-        placeholder="Enter your bio"
-        value={bio}
-        onChangeText={setBio}
-        multiline
-      />
+        <TextInput
+          style={[styles.input, { height: 100 }]}
+          placeholder="Enter your bio"
+          value={bio}
+          onChangeText={setBio}
+          multiline
+        />
 
-      <Button title="Submit" onPress={setProfile} />
+        <SetupSubmitButton
+          onClick={setProfile}
+        />
+        {/* <Button title="Submit" onPress={setProfile} /> */}
+      </View>
     </View>
   );
 
@@ -107,13 +113,19 @@ export default function SignUpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: "#fff",
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  content: {
+    width: '100%', // Ensure content uses full width of the container
+    maxWidth: 400,  // Optional: Set a max width for the content to prevent stretching on wide screens
+    padding: 20,
   },
   heading: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 32,
   },
   input: {
     borderWidth: 1,
@@ -121,6 +133,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginBottom: 20,
+    fontSize: 20
   },
   label: {
     fontSize: 16,
