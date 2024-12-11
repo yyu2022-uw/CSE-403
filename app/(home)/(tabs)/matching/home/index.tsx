@@ -30,7 +30,7 @@ export default function MentorCommunityScreen({ route }) {
             .select('is_mentor, profiles (id, username, full_name, avatar_url, bio)')
             .eq('iid', iid)
             .neq('uid', auth?.user?.id)
-            .limit(8);
+            .limit(10);
 
           if (communityMentors) {
             // console.log("communityMentors", communityMentors);
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    marginTop: 56,
+    marginTop: 36,
     color: '#333',
   },
   button: {
@@ -152,6 +152,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     marginTop: 40,
+    marginBottom: 72
   },
   buttonText: {
     color: '#fff',
