@@ -37,7 +37,7 @@ export default function Bio({ bio, editing }: BioProps) {
         const { data, error } = await supabase
             .from('profiles')
             .update([
-                { bio: bio || "Add a biography..." },
+                { bio },
             ])
             .eq('id', auth?.session?.user.id)
             .select();
@@ -50,7 +50,7 @@ export default function Bio({ bio, editing }: BioProps) {
     if (!editing) {
         return (
             <View style={styles.container}>
-                <Text style={sizes.plainText}>{editableBioText || "Add a biography..."}</Text>
+                <Text style={sizes.plainText}>{editableBioText}</Text>
             </View>
         );
     } else {

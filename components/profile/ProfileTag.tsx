@@ -25,6 +25,8 @@ const ProfileTag: React.FC<ProfileTagProps> = ({ fullName, username, avatarUrl, 
     const [editableUsername, setEditableUsername] = useState(username);
     const [selectedImage, setSelectedImage] = useState(avatarUrl);
     const [loading, setLoading] = useState<boolean>(false);
+    const [imageError, setImageError] = useState(false);
+
 
     useEffect(() => {
         if (!editing) {
@@ -37,6 +39,7 @@ const ProfileTag: React.FC<ProfileTagProps> = ({ fullName, username, avatarUrl, 
     }, [editing]);
 
     const saveImage = async () => {
+        setImageError(false)
         try {
             const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
             if (status !== 'granted') {
@@ -57,6 +60,7 @@ const ProfileTag: React.FC<ProfileTagProps> = ({ fullName, username, avatarUrl, 
         } catch (error) {
             Alert.alert('Error', 'Failed to access the image gallery. Please try again.');
             console.error("Error picking image:", error);
+            setImageError(true)
         }
     };
 
@@ -142,10 +146,20 @@ const ProfileTag: React.FC<ProfileTagProps> = ({ fullName, username, avatarUrl, 
             setLoading(false);
         }
     };
+
     return (
         <View style={styles.container}>
             <Pressable onPress={editing ? saveImage : undefined}>
-                <Image source={{ uri: avatarUrl }} style={styles.profilePicture} />
+                <Image
+                    source={
+                        imageError || !avatarUrl
+                            ? require('assets/images/default-user.webp') // Use require for static assets
+                            : { uri: selectedImage || avatarUrl }
+                    }
+                    onError={() => setImageError(true)}
+                    style={styles.profilePicture}
+                />
+
             </Pressable>
             <View style={styles.fullNameAndUsername}>
                 {loading ? (
