@@ -61,7 +61,7 @@ export default function ChatProvider({ children }: PropsWithChildren) {
   }, [profile, user]);
 
   if (isLoggedOut) {
-    return <Redirect href="/(auth)/login" />;
+    return <Redirect href="/(start)/(auth)/login" />;
   }
 
   if (!isReady) {

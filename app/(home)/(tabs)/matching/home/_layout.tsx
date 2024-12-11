@@ -23,7 +23,7 @@ export default function DrawerNavigator() {
     const user = useAuth()?.user;
 
     if (!user) {
-        return <Redirect href="/(auth)/login" />;
+        return <Redirect href="/(start)/(auth)/login" />;
     }
 
     useFocusEffect(
