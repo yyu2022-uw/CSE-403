@@ -10,9 +10,5 @@ export default function SetUpLayout() {
         }}
       />
     </Stack>
-    // <Slot />
-    // <Stack screenOptions={{ headerShown: false }}>
-    //   <Slot />
-    // </Stack>
   );
 }

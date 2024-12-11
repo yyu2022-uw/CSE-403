@@ -1,9 +1,9 @@
 import { PropsWithChildren, useContext, useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
-import { StreamChat } from 'stream-chat';
 import { Chat, OverlayProvider } from 'stream-chat-expo';
 import { useAuth } from "./AuthProvider";
 import { Redirect } from "expo-router";
+import { StreamChat } from 'stream-chat';
 
 const client = StreamChat.getInstance(process.env.EXPO_PUBLIC_STREAM_API_KEY!);
 
@@ -38,8 +38,8 @@ export default function ChatProvider({ children }: PropsWithChildren) {
         await client.connectUser(
           {
             id: profile.id,
-            name: profile.full_name,
-            image: profile.avatar_url,
+            name: profile.full_name, // none yet before setup
+            image: profile.avatar_url, // none yet before setup
           },
           client.devToken(profile.id)
         );

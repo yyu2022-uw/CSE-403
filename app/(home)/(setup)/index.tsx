@@ -4,6 +4,9 @@ import { Redirect } from "expo-router";
 import { supabase } from "lib/supabase";
 import React, { useState } from "react";
 import { View, TextInput, Text, Button, StyleSheet, Alert } from "react-native";
+import { StreamChat } from 'stream-chat';
+
+const client = StreamChat.getInstance(process.env.EXPO_PUBLIC_STREAM_API_KEY!);
 
 export default function SignUpScreen() {
   const [username, setUsername] = useState("");
@@ -23,6 +26,8 @@ export default function SignUpScreen() {
     }
 
     try {
+      // UPDATE SUPABASE USER
+
       // Check if the username is already taken
       const { data: existingUser, error: fetchError } = await supabase
         .from('profiles')
@@ -54,6 +59,32 @@ export default function SignUpScreen() {
       if (updateError) {
         throw updateError; // Handle any unexpected update errors
       }
+
+      // UPDATE STREAM USER
+
+      const updateStreamUser = async () => {
+        try {
+          // Ensure client instance is initialized
+          if (!client) {
+            throw new Error("Stream client is not initialized.");
+          }
+
+          // Update the Stream user's details
+          await client.partialUpdateUser({
+            id: id!, // The user's Stream ID
+            set: {
+              name: fullName,
+              image: 'assets/images/default-user.webp', // Use default image
+            },
+          });
+
+          console.log("Stream user updated successfully.");
+        } catch (err) {
+          console.error("Error updating Stream user:", err);
+        }
+      };
+
+      updateStreamUser();
 
       if (!updatedProfile || updatedProfile.length === 0) {
         Alert.alert("Error", "Failed to update profile. Please try again.");
