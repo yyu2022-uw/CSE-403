@@ -5,7 +5,7 @@ export default function AuthLayout() {
   const user = useAuth()?.user;
 
   if (user) {
-    return <Redirect href="/(home)" />;
+    return <Redirect href="/(home)/" />;
   }
 
   return (

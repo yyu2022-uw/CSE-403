@@ -14,8 +14,8 @@ type EditProfileButtonProps = {
 
 const EditProfileButton: React.FC<EditProfileButtonProps> = ({ onPress }) => {
 
-    const buttonColor = Colors.light.button_gray;
-    const buttonTextColor = Colors.light.buttonText_gray;
+    const buttonColor = Colors.light.button_tan;
+    const buttonTextColor = Colors.light.buttonText_tan;
     const buttonText = 'Get Started';
 
     return (
@@ -23,7 +23,7 @@ const EditProfileButton: React.FC<EditProfileButtonProps> = ({ onPress }) => {
             onPress={() => { onPress() }}
             style={[styles.container, { backgroundColor: buttonColor }]}>
             <View style={styles.textContainer}>
-                <Text style={[sizes.largePillText, { color: buttonTextColor }]}>{buttonText}</Text>
+                <Text style={styles.text}>{buttonText}</Text>
             </View>
         </Pressable>
     );
@@ -33,10 +33,9 @@ export default EditProfileButton;
 
 const styles = StyleSheet.create({
     container: {
-        width: "90%",
-        height: 48,
+        width: 340,
+        height: 36,
         borderRadius: 50,
-        // margin: "auto",
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -46,4 +45,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "row",
     },
+    text: {
+        fontSize: 18,
+    }
 });

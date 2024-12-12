@@ -24,7 +24,9 @@ export const Colors = {
     button_purple_dark: '#c5a6e1',
     buttonText_purple_dark: '#6f4795',
     button_pink: '#f8d7e1',
-    buttonText_pink: '#e886ac'
+    buttonText_pink: '#e886ac',
+    button_tan: '#f1e2cc',
+    buttonText_tan: '#847251'
   },
   dark: {
     text: '#ECEDEE',

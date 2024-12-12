@@ -1,6 +1,7 @@
 import { Stack } from "expo-router";
 
-export default function HomeLayout() {
+export default function StartLayout() {
+
   return (
     <Stack>
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
@@ -8,5 +9,3 @@ export default function HomeLayout() {
     </Stack>
   );
 }
-
-// Do I really need this file?
