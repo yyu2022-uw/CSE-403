@@ -19,7 +19,7 @@ export default function SignUpScreen() {
     console.log("Setting profile:", { fullName, username, bio, id });
 
     // Validate inputs
-    if (!fullName.trim() || !username.trim() || !bio.trim()) {
+    if (!fullName || !username || !bio) {
       Alert.alert("Warning", "All fields must be filled.");
       // console.error("Validation Error: All fields must be filled.");
       return;

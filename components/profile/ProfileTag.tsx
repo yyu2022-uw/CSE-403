@@ -9,6 +9,9 @@ import { Colors } from '@Colors';
 import { supabase } from 'lib/supabase';
 import { shouldUseActivityState } from 'react-native-screens';
 import { AnswerListAddCommentButton } from 'stream-chat-expo';
+import { StreamChat } from 'stream-chat';
+
+const client = StreamChat.getInstance(process.env.EXPO_PUBLIC_STREAM_API_KEY!);
 
 interface ProfileTagProps {
     fullName: string;
@@ -82,7 +85,7 @@ const ProfileTag: React.FC<ProfileTagProps> = ({ fullName, username, avatarUrl, 
         }
 
         // Validate inputs
-        if (!fullName.trim() || !username.trim()) {
+        if (!fullName || !username) {
             // Restore previous values for invalid input
             setEditableName(lastValidName);
             setEditableUsername(lastValidUsername);
@@ -135,6 +138,31 @@ const ProfileTag: React.FC<ProfileTagProps> = ({ fullName, username, avatarUrl, 
                 setLoading(false);
                 return;
             }
+
+            // Update in Stream as well, for full name and image only
+            const updateStreamUser = async () => {
+                try {
+                    // Ensure client instance is initialized
+                    if (!client) {
+                        throw new Error("Stream client is not initialized.");
+                    }
+
+                    // Update the Stream user's details
+                    await client.partialUpdateUser({
+                        id: auth?.user?.id!, // The user's Stream ID
+                        set: {
+                            name: fullName,
+                            image: avatarUrl, // Update the user's image
+                        },
+                    });
+
+                    console.log("Stream user updated successfully.");
+                } catch (err) {
+                    console.error("Error updating Stream user:", err);
+                }
+            };
+
+            updateStreamUser();
 
             setLastValidName(editableName);
             setLastValidUsername(editableUsername);
