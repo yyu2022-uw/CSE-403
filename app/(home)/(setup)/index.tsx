@@ -74,7 +74,7 @@ export default function SignUpScreen() {
             id: id!, // The user's Stream ID
             set: {
               name: fullName,
-              image: 'assets/images/default-user.webp', // Use default image
+              image: 'assets/images/default-user.png', // Use default image
             },
           });
 

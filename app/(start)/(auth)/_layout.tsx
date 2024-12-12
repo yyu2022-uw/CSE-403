@@ -14,6 +14,7 @@ export default function AuthLayout() {
         name="login"
         options={{
           title: "Welcome to InterConnect",
+          headerTintColor: '#765008',
         }}
       />
     </Stack>

@@ -36,35 +36,37 @@ export default function Auth() {
 
     return (
         <View style={styles.container}>
-            <View style={[styles.verticallySpaced, styles.mt20]}>
-                <Input
-                    label="Email"
-                    leftIcon={{ type: 'font-awesome', name: 'envelope' }}
-                    onChangeText={(text) => setEmail(text)}
-                    value={email}
-                    placeholder="email@address.com"
-                    autoCapitalize={'none'}
-                />
-            </View>
-            <View style={styles.verticallySpaced}>
-                <Input
-                    label="Password"
-                    leftIcon={{ type: 'font-awesome', name: 'lock' }}
-                    onChangeText={(text) => setPassword(text)}
-                    value={password}
-                    secureTextEntry={true}
-                    placeholder="Password"
-                    autoCapitalize={'none'}
-                />
-            </View>
-            <View style={[styles.verticallySpaced, styles.mt20]}>
-                <Button title="Sign in" disabled={loading} onPress={() => {
-                    router.push('/(start)/(get-started)/start-page'); // Navigate to the login page testing
-                    // signInWithEmail()
-                }} />
-            </View>
-            <View style={styles.verticallySpaced}>
-                <Button title="Sign Up" disabled={loading} onPress={() => signUpWithEmail()} />
+            <View style={styles.content}>
+                <View style={[styles.verticallySpaced, styles.mt20]}>
+                    <Input
+                        label="Email"
+                        leftIcon={{ type: 'font-awesome', name: 'envelope' }}
+                        onChangeText={(text) => setEmail(text)}
+                        value={email}
+                        placeholder="email@address.com"
+                        autoCapitalize={'none'}
+                    />
+                </View>
+                <View style={styles.verticallySpaced}>
+                    <Input
+                        label="Password"
+                        leftIcon={{ type: 'font-awesome', name: 'lock' }}
+                        onChangeText={(text) => setPassword(text)}
+                        value={password}
+                        secureTextEntry={true}
+                        placeholder="Password"
+                        autoCapitalize={'none'}
+                    />
+                </View>
+                <View style={[styles.verticallySpaced, styles.mt20]}>
+                    <Button title="Sign in" disabled={loading} onPress={() => {
+                        // router.push('/(start)/(get-started)/start-page'); // Navigate to the login page testing
+                        signInWithEmail()
+                    }} color={'#f1e2cc'} titleStyle={{ color: '#847251' }} buttonStyle={{ borderRadius: 25 }} />
+                </View>
+                <View style={styles.verticallySpaced}>
+                    <Button title="Sign Up" disabled={loading} onPress={() => signUpWithEmail()} color={'#f1e2cc'} titleStyle={{ color: '#847251' }} buttonStyle={{ borderRadius: 25 }} />
+                </View>
             </View>
         </View>
     )
@@ -72,8 +74,13 @@ export default function Auth() {
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: 40,
-        padding: 12,
+        flex: 1,
+        backgroundColor: '#fff6ea',
+        justifyContent: 'center',
+        padding: 24,
+    },
+    content: {
+        marginBottom: 120
     },
     verticallySpaced: {
         paddingTop: 4,
