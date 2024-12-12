@@ -45,6 +45,9 @@ export default function SignUpScreen() {
         return;
       }
 
+      // Default user
+      const defaultImageUrl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/680px-Default_pfp.svg.png'; // Default image
+
       // Update the profile in Supabase
       const { data: updatedProfile, error: updateError } = await supabase
         .from('profiles')
@@ -52,6 +55,7 @@ export default function SignUpScreen() {
           full_name: fullName.trim(),
           username: username.trim(),
           bio: bio.trim(),
+          avatar_url: defaultImageUrl
         })
         .eq('id', id)
         .select();
@@ -74,7 +78,7 @@ export default function SignUpScreen() {
             id: id!, // The user's Stream ID
             set: {
               name: fullName,
-              image: 'assets/images/default-user.png', // Use default image
+              image: defaultImageUrl, // Use default image
             },
           });
 

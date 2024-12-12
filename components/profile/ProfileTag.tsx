@@ -181,7 +181,7 @@ const ProfileTag: React.FC<ProfileTagProps> = ({ fullName, username, avatarUrl, 
                 <Image
                     source={
                         imageError || !avatarUrl
-                            ? require('assets/images/default-user.png') // Use require for static assets
+                            ? { uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/680px-Default_pfp.svg.png' } // Default image
                             : { uri: selectedImage || avatarUrl }
                     }
                     onError={() => setImageError(true)}

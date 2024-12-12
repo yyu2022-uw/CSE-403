@@ -30,7 +30,7 @@ export default function MentorCommunityScreen({ route }) {
             .select('is_mentor, profiles (id, username, full_name, avatar_url, bio)')
             .eq('iid', iid)
             .neq('uid', auth?.user?.id)
-            .limit(10);
+            .limit(20);
 
           if (communityMentors) {
             // console.log("communityMentors", communityMentors);

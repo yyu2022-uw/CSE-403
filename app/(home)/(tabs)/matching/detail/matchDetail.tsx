@@ -134,7 +134,14 @@ export default function MentorDetailScreen() { // Include navigation as prop
                 style={[styles.avatar, styles.image]}
               />
             ) : (
-              <View style={[styles.avatar, styles.noImage]} />
+              // <View style={[styles.avatar, styles.noImage]} />
+              <Image
+                // source={{ uri: 'https://placehold.jp/8ACE00/000000/150x150.png?text=interconnect' }}
+                // source={{ uri: 'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg' }}
+                source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/680px-Default_pfp.svg.png' }} // Default image
+                accessibilityLabel="Avatar"
+                style={[styles.avatar, styles.image]}
+              />
             )}
           </View>
 
